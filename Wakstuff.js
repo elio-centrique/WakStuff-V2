@@ -41,5 +41,5 @@ load_itemslist();
  })
 
  eval(fs.readFileSync('./functions/commands/commands.js') + '');
- client.login("NzMyMDYxMzgwMjk1MDAwMTI2.XwvHUg.AT3gZqwSdv9BDsrgJq95s4lVGO4");
+ client.login(process.env["token"]);
  //#endregion
