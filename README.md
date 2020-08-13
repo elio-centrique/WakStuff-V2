@@ -19,8 +19,8 @@ Arguments between {} are mandatory, arguments between [] are optional. Those sym
   
 ### Configuration
 <ul>
-<li> w!language [lang] <br/> Retrieve the actual language. If ***lang*** is given, change the current language to the given one. Available languages: FR, EN </li>
-<li> w!prefix [prefix] <br/> Retrieve the actual prefix. If ***prefix*** is given, change the current prefix to the given one. </li>
+<li> w!language [lang] <br/> Retrieve the actual language. If [lang] is given, change the current language to the given one. Available languages: FR, EN </li>
+<li> w!prefix [prefix] <br/> Retrieve the actual prefix. If [prefix] is given, change the current prefix to the given one. </li>
 <li> w!configure {lang} {prefix} <br/> Configure the bot to be used with given language and prefix. Can be used even if you already configure the bot. </li>
 </ul>
 
