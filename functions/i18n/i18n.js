@@ -94,7 +94,7 @@ function init_i18n() {
                     'help_language': 'language [langue]** : Donne la langue actuelle. Si ***langue*** est donnée, change la langue actuelle par celle donnée.',
                     'help_prefix': 'prefix [préfixe]** : Donne le préfixe actuel. si ***préfixe*** est donné, change le préfixe actuel par celui donné.',
                     'help_configure': 'configure {langue} {préfixe}** : Configure le bot pour utiliser le préfixe et la langue donnée. Cette commande est utilisable même si le bot est déjà configuré.',
-                    'help_search': 'search {quelque chose}** : Cherche un objet avec "quelque chose" idans son nom et renvoie sa description et ses statistiques.',
+                    'help_search': 'search {quelque chose}** : Cherche un objet avec "quelque chose" dans son nom et renvoie sa description et ses statistiques.',
                     'help_compare': 'compare** : Lance la procédure de comparaison de deux objets.',
                     'help_help': 'help** : envoie ce message.',
                     'help_almanax': 'almanax** : Donne l\'almanax du jour.',
