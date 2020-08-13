@@ -30,6 +30,7 @@ function init_i18n() {
                     'help_search': 'search {something}** : Search an item with "something" in their name and retrieve its description and stats.',
                     'help_compare': 'compare** : Fire the comparison procedure to compare stats of two items.',
                     'help_help': 'help** : send this message.',
+                    'help_almanax': 'almanax** : Send the almanax of the day.',
                     'noauthorized': 'You\'re not allowed to use this command',
                     "common": "common",
                     "rare": "rare",
