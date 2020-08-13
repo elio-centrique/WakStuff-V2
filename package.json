@@ -1,0 +1,30 @@
+{
+  "name": "wakstuff-v2",
+  "version": "1.0.0",
+  "description": "Discord Bot which retrieve and compare gears",
+  "main": "WakStuff.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/elio-centrique/WakStuff-V2.git"
+  },
+  "keywords": [
+    "Wakfu",
+    "WakStuff"
+  ],
+  "author": "Elio-Centrique",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/elio-centrique/WakStuff-V2/issues"
+  },
+  "homepage": "https://github.com/elio-centrique/WakStuff-V2#readme",
+  "dependencies": {
+    "discord.js": "^12.2.0",
+    "fs": "0.0.1-security",
+    "i18next": "^19.6.2",
+    "mongodb": "^3.5.9",
+    "node-fetch": "^2.6.0"
+  }
+}
