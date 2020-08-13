@@ -1,1 +1,1 @@
-worker: node WakStuff.js
+worker: node Wakstuff.js
