@@ -68,10 +68,10 @@ client.on('message', async message => {
             let list_found = [];
 
             list_items.forEach(item => {
-                if(item.name_fr.toLowerCase().includes(args.join(" ").toLowerCase())) {
+                if(item.name_fr && item.name_fr.toLowerCase().includes(args.join(" ").toLowerCase())) {
                     find_object = true;
                     list_found.push(item);
-                } else if(item.name_en.toLowerCase().includes(args.join(" ").toLowerCase())) {
+                } else if(item.name_en && item.name_en.toLowerCase().includes(args.join(" ").toLowerCase())) {
                     find_object = true;
                     list_found.push(item);
                 }
@@ -170,10 +170,10 @@ client.on('message', async message => {
                 .then(collected => {
                     let list_found = [];
                     list_items.forEach(item => {
-                        if(item.name_fr.toString().toLowerCase().includes(collected.first().content.toLowerCase())) {
+                        if(item.name_fr && item.name_fr.toString().toLowerCase().includes(collected.first().content.toLowerCase())) {
                             find_object1 = true;
                             list_found.push(item);
-                        } else if(item.name_en.toString().toLowerCase().includes(collected.first().content.toLowerCase())) {
+                        } else if(item.name_en && item.name_en.toString().toLowerCase().includes(collected.first().content.toLowerCase())) {
                             find_object1 = true;
                             list_found.push(item);
                         }
@@ -213,10 +213,10 @@ client.on('message', async message => {
                                 .then(collected => {
                                     let list_found = [];
                                     list_items.forEach(item => {
-                                        if(item.name_fr.toString().toLowerCase().includes(collected.first().content.toLowerCase())) {
+                                        if(item.name_fr && item.name_fr.toString().toLowerCase().includes(collected.first().content.toLowerCase())) {
                                             find_object2 = true;
                                             list_found.push(item);
-                                        } else if(item.name_en.toString().toLowerCase().includes(collected.first().content.toLowerCase())) {
+                                        } else if(item.name_en && item.name_en.toString().toLowerCase().includes(collected.first().content.toLowerCase())) {
                                             find_object2 = true;
                                             list_found.push(item);
                                         }
