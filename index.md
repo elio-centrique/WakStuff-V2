@@ -18,6 +18,7 @@ This bot don't need any extra permission, but keep in mind that it needs reading
 Arguments between {} are mandatory, arguments between [] are optional. Those symbols don't need to be written.
   
 ### Configuration
+
 <ul>
 <li> w!language [lang] <br/> Retrieve the actual language. If [lang] is given, change the current language to the given one. Available languages: FR, EN </li>
 <li> w!prefix [prefix] <br/> Retrieve the actual prefix. If [prefix] is given, change the current prefix to the given one. </li>
@@ -25,17 +26,20 @@ Arguments between {} are mandatory, arguments between [] are optional. Those sym
 </ul>
 
 ### Objects
+
 <ul>
 <li> w!search {something} <br/> Search an item with "something" in their name and retrieve its description and stats. </li>
 <li> w!compare <br/> Fire the comparison procedure to compare stats of two items.</li>
 </ul>
 
 ### Help
+
 <ul>
 <li> w!help <br/> Send an help message.</li>
 </ul>
 
 ### Almanax
+
 <ul>
 <li> w!almanax <br/> Send the almanax of the day.</li>
 </ul>
