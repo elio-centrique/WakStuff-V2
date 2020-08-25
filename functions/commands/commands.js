@@ -124,14 +124,14 @@ client.on('message', async message => {
                             .then(collected => {
                                 if (lang === "fr") {
                                     let embed_item = new Discord.MessageEmbed().setTitle(list_found[parseInt(collected.first().content) - 1].name_fr + " " + i18next.t("level") + " " + list_found[parseInt(collected.first().content) - 1].level)
-                                        .setDescription(list_found[0].get_message_stats(lang))
+                                        .setDescription(list_found[parseInt(collected.first().content) - 1].get_message_stats(lang))
                                         .setColor(list_found[parseInt(collected.first().content) - 1].color)
                                         .addField("Description: ", list_found[parseInt(collected.first().content) - 1].description_fr)
                                         .setImage(list_found[parseInt(collected.first().content) - 1].image)
-                                    message.channel.send(embed_item)
+                                    message.channel.send(embed_item);
                                 } else {
                                     let embed_item = new Discord.MessageEmbed().setTitle(list_found[parseInt(collected.first().content) - 1].name_en + " " + i18next.t("level") + " " + list_found[parseInt(collected.first().content) - 1].level)
-                                        .setDescription(list_found[0].get_message_stats(lang))
+                                        .setDescription(list_found[parseInt(collected.first().content) - 1].get_message_stats(lang))
                                         .setColor(list_found[parseInt(collected.first().content) - 1].color)
                                         .addField("Description: ", list_found[parseInt(collected.first().content) - 1].description_en)
                                         .setImage(list_found[parseInt(collected.first().content) - 1].image)
