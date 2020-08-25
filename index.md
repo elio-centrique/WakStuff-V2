@@ -1,37 +1,70 @@
-## Welcome to GitHub Pages
+# WakStuff-V2
+<p>WakStuff is a Discord bot for the game Wakfu&copy; created with the JSON data provided by Ankama Games&copy; <br>
+WakStuff was developed to give informations about gears, and other usefull features.
+</p>
 
-You can use the [editor on GitHub](https://github.com/elio-centrique/WakStuff-V2/edit/gh-pages/index.md) to maintain and preview the content for your website in Markdown files.
+## How to use it
+<p>First of all, you need to be an administrator of a server to invite the bot.
+If you are, congratulation, you can click on this link to invite the bot: <br/>
+https://discordapp.com/oauth2/authorize?client_id=507553140330201089&scope=bot&permissions=0 <br/>
+This bot don't need any extra permission, but keep in mind that it needs reading and writing message, and send links in channels to work.
+</p>
 
-Whenever you commit to this repository, GitHub Pages will run [Jekyll](https://jekyllrb.com/) to rebuild the pages in your site, from the content in your Markdown files.
+## And then?
+<p>That's all, the bot is ready to use, yeah ! </p>
 
-### Markdown
+## Commands
+<p> Here the list of all the commands available: (the default prefix is "w!") <br/>
+Arguments between {} are mandatory, arguments between [] are optional. Those symbols don't need to be written.
+  
+### Configuration
+<ul>
+<li> w!language [lang] <br/> Retrieve the actual language. If [lang] is given, change the current language to the given one. Available languages: FR, EN </li>
+<li> w!prefix [prefix] <br/> Retrieve the actual prefix. If [prefix] is given, change the current prefix to the given one. </li>
+<li> w!configure {lang} {prefix} <br/> Configure the bot to be used with given language and prefix. Can be used even if you already configure the bot. </li>
+</ul>
 
-Markdown is a lightweight and easy-to-use syntax for styling your writing. It includes conventions for
+### Objects
+<ul>
+<li> w!search {something} <br/> Search an item with "something" in their name and retrieve its description and stats. </li>
+<li> w!compare <br/> Fire the comparison procedure to compare stats of two items.</li>
+</ul>
 
-```markdown
-Syntax highlighted code block
+### Help
+<ul>
+<li> w!help <br/> Send an help message.</li>
+</ul>
 
-# Header 1
-## Header 2
-### Header 3
+### Almanax
+<ul>
+<li> w!almanax <br/> Send the almanax of the day.</li>
+</ul>
 
-- Bulleted
-- List
+## Support
+<p> If you need help with the bot (connection issues, usage, suggestions, etc...), you can join the discord server: <br>
+https://discord.gg/w5kbMsT <br>
+</p>
 
-1. Numbered
-2. List
+## Contribution
 
-**Bold** and _Italic_ and `Code` text
+### Installation
+<p>You can contribute to this project by cloning it. <p>
+<p>First of all, you need to install a NodeJS environnement <br>
+Then, go to the repository folder, open a CMD and type "npm install" (keep it open after the installation) <br>
+Then, create an env file with database and discord app token variables in it.
+That's it, the bot is ready to use.<br>
+To launch it, type "node Wakfstuff.js", and invite your bot on your server by creating a invitation link: <br>
+https://discordapi.com/permissions.html (type your Client ID available in your Discord application. The bot don't need any permission.) <br>
+</p>
 
-[Link](url) and ![Image](src)
-```
+### Github
+<p>
+The main github repository obey to several rules: <br>
+- master branch is a read-only branch. Only me can pull request, commit and push on it. <br>
+- develop branch is only a merge branch. Please create a new branch from develop and create a pull request when you need to merge your work. <br>
+- you can fork and use the repository as a template. You're free to do wathever you want on it.<br>
+<br>
+Please respect these rules.
+</p>
 
-For more details see [GitHub Flavored Markdown](https://guides.github.com/features/mastering-markdown/).
-
-### Jekyll Themes
-
-Your Pages site will use the layout and styles from the Jekyll theme you have selected in your [repository settings](https://github.com/elio-centrique/WakStuff-V2/settings). The name of this theme is saved in the Jekyll `_config.yml` configuration file.
-
-### Support or Contact
-
-Having trouble with Pages? Check out our [documentation](https://docs.github.com/categories/github-pages-basics/) or [contact support](https://github.com/contact) and we’ll help you sort it out.
+Wakstuff-V2 is owned by Elio-Centrique. All right reserved &copy; 2020
