@@ -60,12 +60,11 @@ https://discordapi.com/permissions.html (type your Client ID available in your D
 ### Github
 <p>
 The main github repository obey to several rules: <br>
-- master & heroku branches are read-only branches. Only me can pull request, commit and push on it. <br>
-- heroku branch is a deployment branch for Heroku website. <br>
+- master branch is a read-only branch. Only me can pull request, commit and push on it. <br>
 - develop branch is only a merge branch. Please create a new branch from develop and create a pull request when you need to merge your work. <br>
 - you can fork and use the repository as a template. You're free to do wathever you want on it.<br>
 <br>
-Please respect this rules.
+Please respect these rules.
 </p>
 
 Wakstuff-V2 is owned by Elio-Centrique. All right reserved &copy; 2020
