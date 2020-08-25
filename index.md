@@ -54,7 +54,7 @@ Then, go to the repository folder, open a CMD and type "npm install" (keep it op
 Then, create an env file with database and discord app token variables in it.
 That's it, the bot is ready to use.<br>
 To launch it, type "node Wakfstuff.js", and invite your bot on your server by creating a invitation link: <br>
-https://discordapi.com/permissions.html (type your Client ID available in your Discord application. The bot don't need any permission.) <br>
+https://discordapi.com/permissions.html <br>(type your Client ID available in your Discord application. The bot don't need any permission.)
 </p>
 
 ### Github
