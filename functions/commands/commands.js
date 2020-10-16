@@ -97,7 +97,7 @@ client.on('message', async message => {
                         message.channel.send(embed);
                     }
                 } else {
-                    if (list_found.length > 11) {
+                    if (list_found.length > 21) {
                         message.channel.send(i18next.t("toomanyobjects"));
                     } else {
                         let description = "";
