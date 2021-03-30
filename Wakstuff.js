@@ -5,6 +5,9 @@ const Discord = require('discord.js');
 const MongoClient = require('mongodb').MongoClient;
 const fs = require("fs");
 const fetch = require("node-fetch");
+let cheerio = require ('cheerio');
+let jsonframe = require ('jsonframe-cheerio');
+const axios = require('axios').default;
 //#endregion
 
 //#region const declarations
