@@ -1,17 +1,14 @@
 {
   "name": "wakstuff-v2",
   "version": "1.0.0",
-  "description": "Discord Bot which retrieve and compare gears",
+  "description": "retrieve and compare gears from Wakfu",
   "main": "Wakstuff.js",
   "dependencies": {
     "axios": "^0.21.1",
     "cheerio": "^1.0.0-rc.5",
     "discord.js": "^12.5.1",
-    "jsonframe-cheerio": "^3.0.1",
-	"fs": "0.0.1-security",
-    "i18next": "^19.6.2",
-    "mongodb": "^3.5.9",
-    "node-fetch": "^2.6.1"
+    "dotenv": "^8.2.0",
+    "jsonframe-cheerio": "^3.0.1"
   },
   "devDependencies": {},
   "scripts": {
