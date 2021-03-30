@@ -393,18 +393,27 @@ client.on('message', async message => {
 
     if(command === "almanax") {
         if(args.length === 0) {
-            fetch('http://almanax.kasswat.com', {method: 'get'}).then(res => res.json()).then((json) => {
+           get_frame_total().then((json) => {
+                let wakfu_bonus = get_wakfu_bonus();
+                json['description_fr'] = json['description_fr'].slice(json['description_fr'].indexOf(" "));
+                json['description_en'] = json['description_en'].slice(json['description_en'].indexOf(" "));
                 let embed  = null;
                 if(lang === "fr") {
                     embed = new Discord.MessageEmbed().setTitle(json['day'] + " " + json['month'] + " 977")
-                        .setDescription(json['description'][0])
-                        .addField('bonus', json['bonus'][0])
-                        .setImage('https://vertylo.github.io/wakassets/merydes/' + json['img'] + '.png')
+                        .setDescription(json['description_fr'])
+                        .addField('\u200b', '\u200b')
+                        .addField('BONUS WAKFU', wakfu_bonus[0])
+                        .addField('\u200b', '\u200b')
+                        .addField('BONUS DOFUS', json['dofus_bonus_fr']['bonus'])
+                        .setImage(json['img'])
                 } else {
                     embed = new Discord.MessageEmbed().setTitle(json['day'] + " " + json['month'] + " 977")
-                        .setDescription(json['description'][1])
-                        .addField('bonus', json['bonus'][1])
-                        .setImage('https://vertylo.github.io/wakassets/merydes/' + json['img'] + '.png')
+                        .setDescription(json['description_en'])
+                        .addField('\u200b', '\u200b')
+                        .addField('WAKFU\'S BONUS', wakfu_bonus[1])
+                        .addField('\u200b', '\u200b')
+                        .addField('BONUS DOFUS', json['dofus_bonus_en']['bonus'])
+                        .setImage(json['img'])
                 }
                 message.channel.send(embed);
             });
