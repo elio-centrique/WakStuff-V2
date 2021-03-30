@@ -8,6 +8,8 @@ const fetch = require("node-fetch");
 let cheerio = require ('cheerio');
 let jsonframe = require ('jsonframe-cheerio');
 const axios = require('axios').default;
+const dotenv = require("dotenv")
+dotenv.config();
 //#endregion
 
 //#region const declarations

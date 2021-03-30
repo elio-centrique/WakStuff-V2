@@ -393,7 +393,7 @@ client.on('message', async message => {
 
     if(command === "almanax") {
         if(args.length === 0) {
-           get_frame_total().then((json) => {
+            get_frame_total().then((json) => {
                 let wakfu_bonus = get_wakfu_bonus();
                 json['description_fr'] = json['description_fr'].slice(json['description_fr'].indexOf(" "));
                 json['description_en'] = json['description_en'].slice(json['description_en'].indexOf(" "));
