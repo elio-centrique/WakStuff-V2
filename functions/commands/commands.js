@@ -1,4 +1,6 @@
 const i18next = require('i18next');
+const Discord = require("discord.js");
+
 
 //#region commandes
 client.on('message', async message => {
@@ -82,7 +84,7 @@ client.on('message', async message => {
             } else {
                 if (list_found.length === 1) {
                     if (lang === 'fr') {
-                        let embed = new Discord.MessageEmbed().setTitle(list_found[0].name_fr)
+                        let embed = new Client.MessageEmbed().setTitle(list_found[0].name_fr)
                             .setDescription(list_found[0].get_message_stats(lang))
                             .setColor(list_found[0].color)
                             .addField("Description: ", list_found[0].description_fr)
@@ -97,51 +99,75 @@ client.on('message', async message => {
                         message.channel.send(embed);
                     }
                 } else {
-                    if (list_found.length > 21) {
+                    if (list_found.length > 25) {
                         message.channel.send(i18next.t("toomanyobjects"));
                     } else {
-                        let description = "";
-                        let i = 1;
-                        let answers = []
+                        let options = []
+                        let i = 0;
                         list_found.forEach(item_found => {
+                            let option
                             if (lang === "fr") {
-                                description += i + "> " + item_found.name_fr + " " + i18next.t("level") + " " + item_found.level.toString() + " " + i18next.t(item_found.rarity.toString()) + "\n";
+                                option = new Option.Option(item_found.name_fr, i.toString(), i18next.t("level") + " " + item_found.level.toString() + " " + i18next.t(item_found.rarity.toString()), null, false);
                             } else {
-                                description += i + "> " + item_found.name_en + " " + i18next.t("level") + " " + item_found.level.toString() + " " + i18next.t(item_found.rarity.toString()) + "\n";
+                                option = new Option.Option(item_found.name_en, i.toString(), i18next.t("level") + " " + item_found.level.toString() + " " + i18next.t(item_found.rarity.toString()), null, false);
                             }
-                            answers.push(i);
+                            options.push(option);
                             i++;
-                        })
-                        let embed = new Discord.MessageEmbed()
+                        });
+                        let selectMessage = new Discord.MessageSelectMenu();
+                        selectMessage.setPlaceholder(i18next.t("chooseNumber"))
+                            .addOptions(options)
+                            .setCustomID("search");
+
+                        /*let embed = new Discord.MessageEmbed()
                             .setTitle(i18next.t("chooseNumber"))
                             .setDescription(description);
-
-                        const filter = m => {
-                            return answers.includes(parseInt(m.content));
-                        };
-                        message.channel.send(embed).then(() => {
-                            message.channel.awaitMessages(filter, {max: 1, time: 30000, errors: ['time']})
-                            .then(collected => {
-                                if (lang === "fr") {
-                                    let embed_item = new Discord.MessageEmbed().setTitle(list_found[parseInt(collected.first().content) - 1].name_fr + " " + i18next.t("level") + " " + list_found[parseInt(collected.first().content) - 1].level)
-                                        .setDescription(list_found[parseInt(collected.first().content) - 1].get_message_stats(lang))
-                                        .setColor(list_found[parseInt(collected.first().content) - 1].color)
-                                        .addField("Description: ", list_found[parseInt(collected.first().content) - 1].description_fr)
-                                        .setImage(list_found[parseInt(collected.first().content) - 1].image)
-                                    message.channel.send(embed_item);
-                                } else {
-                                    let embed_item = new Discord.MessageEmbed().setTitle(list_found[parseInt(collected.first().content) - 1].name_en + " " + i18next.t("level") + " " + list_found[parseInt(collected.first().content) - 1].level)
-                                        .setDescription(list_found[parseInt(collected.first().content) - 1].get_message_stats(lang))
-                                        .setColor(list_found[parseInt(collected.first().content) - 1].color)
-                                        .addField("Description: ", list_found[parseInt(collected.first().content) - 1].description_en)
-                                        .setImage(list_found[parseInt(collected.first().content) - 1].image)
-                                    message.channel.send(embed_item)
-                                }
-                            })
-                            .catch(collected => {
-                                message.channel.send(i18next.t("timesup"));
-                            });
-                        })
+                        */
+                        const filter = (interaction) => interaction.customID === selectMessage.customID;
+                        const collector = message.channel.createMessageComponentInteractionCollector({ filter, time: 120000 });
+                        collector.channel.send({
+                            content: selectMessage.placeholder,
+                            components: [{
+                                "type": "ACTION_ROW",
+                                components: [{
+                                    "type": "SELECT_MENU",
+                                    "customID": selectMessage.customID,
+                                    "options": selectMessage.options,
+                                }]
+                            }],
+                            ephemeral: true,
+                        });
+                        collector.on('collect', collected => {
+                            collector.channel.lastMessage.delete();
+                            if (lang === "fr") {
+                                let embed_item = new Discord.MessageEmbed()
+                                    .setTitle(list_found[parseInt(collected.values[0])].name_fr + " "  + i18next.t("level") + " " + list_found[parseInt(collected.values[0])].level)
+                                    .setDescription(list_found[parseInt(collected.values[0])].get_message_stats(lang))
+                                    .setColor(list_found[parseInt(collected.values[0])].color)
+                                    .addField("Description: ", list_found[parseInt(collected.values[0])].description_fr)
+                                    .setImage(list_found[parseInt(collected.values[0])].image)
+                                message.channel.send({
+                                    embeds: [embed_item.toJSON()]
+                                });
+                                collector.stop("finish")
+                            } else {
+                                let embed_item = new Discord.MessageEmbed()
+                                    .setTitle(list_found[parseInt(collected.values[0])].name_en + " " + i18next.t("level") + " " + list_found[parseInt(collected.values[0])].level)
+                                    .setDescription(list_found[parseInt(collected.values[0])].get_message_stats(lang))
+                                    .setColor(list_found[parseInt(collected.values[0])].color)
+                                    .addField("Description: ", list_found[parseInt(collected.values[0])].description_en)
+                                    .setImage(list_found[parseInt(collected.values[0])].image)
+                                message.channel.send({
+                                    embeds: [embed_item.toJSON()]
+                                });
+                                collector.stop("finish")
+                            }
+                        });
+                        collector.on('end', (collected, reason) => {
+                            if(reason === "time"){
+                                message.channel.send(i18next.t("timesup"))
+                            }
+                        });
                     }
                 }
             }

@@ -1,7 +1,7 @@
 
 //#region Imports & requires
 const i18next = require('i18next');
-const Discord = require('discord.js');
+const { Client, Intents } = require('discord.js');
 const MongoClient = require('mongodb').MongoClient;
 const fs = require("fs");
 const fetch = require("node-fetch");
@@ -9,11 +9,12 @@ let cheerio = require ('cheerio');
 let jsonframe = require ('jsonframe-cheerio');
 const axios = require('axios').default;
 const dotenv = require("dotenv")
+const Option = require("./assets/Classes/Option");
 dotenv.config();
 //#endregion
 
 //#region const declarations
-const client = new Discord.Client();
+const client = new Client({ intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES] });
 const default_prefix = "w!";
 const uri = "mongodb+srv://" + process.env['db_user'] + ":" +  process.env['db_pass'] + "@" +  process.env['db_name'] + "-l6ey6.gcp.mongodb.net/test?retryWrites=true&w=majority";
 const mongo_client = new MongoClient(uri, { useNewUrlParser: true });
