@@ -89,14 +89,14 @@ client.on('message', async message => {
                             .setColor(list_found[0].color)
                             .addField("Description: ", list_found[0].description_fr)
                             .setImage(list_found[0].image)
-                        message.channel.send({embeds: embed});
+                        message.channel.send({embeds: [embed]});
                     } else {
                         let embed = new Discord.MessageEmbed().setTitle(list_found[0].name_en)
                             .setDescription(list_found[0].get_message_stats(lang))
                             .setColor(list_found[0].color)
                             .addField("Description: ", list_found[0].description_en)
                             .setImage(list_found[0].image)
-                        message.channel.send({embeds: embed});
+                        message.channel.send({embeds: [embed]});
                     }
                 } else {
                     if (list_found.length > 25) {
@@ -223,7 +223,7 @@ client.on('message', async message => {
                     const filter_list1 = m => {
                         return answers_list1.includes(parseInt(m.content));
                     };
-                    message.channel.send({embeds: embed}).then(() => {
+                    message.channel.send({embeds: [embed]}).then(() => {
                         message.channel.awaitMessages(filter_list1, {max: 1, time: 30000, errors: ['time']})
                         .then(collected => {
                             item1 = list_found[parseInt(collected.first().content) - 1];
@@ -266,7 +266,7 @@ client.on('message', async message => {
                                     const filter_list2 = m => {
                                         return answers_list2.includes(parseInt(m.content));
                                     };
-                                    message.channel.send({embeds: embed}).then(() => {
+                                    message.channel.send({embeds: [embed]}).then(() => {
                                         message.channel.awaitMessages(filter_list2, {max: 1, time: 30000, errors: ['time']})
                                         .then(collected => {
                                             item2 = list_found[parseInt(collected.first().content) - 1];
@@ -374,7 +374,7 @@ client.on('message', async message => {
                                                     .setColor("#000000")
                                                     .addField(item_one_name, tmpMessage1, true)
                                                     .addField(item_two_name, tmpMessage2, true);
-                                                message.channel.send({embeds: embed_message});
+                                                message.channel.send({embeds: [embed_message]});
                                             }
                                         })
                                         .catch(collected => {
@@ -411,7 +411,7 @@ client.on('message', async message => {
                 .addField("Objects ", "**" + prefix + i18next.t("help_search") + "\n**" + prefix + i18next.t("help_compare"), false)
                 .addField("Help ", "**" + prefix + i18next.t("help_help"), false)
                 .addField("Almanax ", "**" + prefix + i18next.t("help_almanax"), false)
-            message.channel.send({embeds: embed_message});
+            message.channel.send({embeds: [embed_message]});
         } else {
             message.channel.send(i18next.t("toomucharguments"))
         }
@@ -441,7 +441,7 @@ client.on('message', async message => {
                         .addField('BONUS DOFUS', json['dofus_bonus_en']['bonus'])
                         .setImage(json['img'])
                 }
-                message.channel.send({embeds: embed});
+                message.channel.send({embeds: [embed]});
             });
         } else {
             message.channel.send(i18next.t("toomucharguments"))
