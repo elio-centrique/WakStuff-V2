@@ -7,7 +7,7 @@
     "axios": "^0.21.1",
     "cheerio": "^1.0.0-rc.5",
     "discord.js": "^13.0.0-dev.fe6cc0c.1625227356",
-    "dotenv": "^8.2.0",
+    "dotenv": "^9.0.0",
     "fs": "^0.0.1-security",
     "i18next": "^20.1.0",
     "jsonframe-cheerio": "^3.0.1",
