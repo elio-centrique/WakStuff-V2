@@ -273,7 +273,6 @@ client.on('message', async message => {
                     collector_1.on('end', (collected, reason) => {
                         if(reason === "time"){
                             message.channel.send(i18next.t("timesup"))
-                            return;
                         }
                     });
                     
@@ -362,7 +361,6 @@ client.on('message', async message => {
                             collector_2.on('end', (collected, reason) => {
                                 if(reason === "time"){
                                     message.channel.send(i18next.t("timesup"))
-                                    return;
                                 }
                             });
                                    
