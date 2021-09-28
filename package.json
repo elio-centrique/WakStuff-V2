@@ -31,7 +31,7 @@
   "bugs": {
     "url": "https://github.com/elio-centrique/WakStuff-V2/issues"
   },
-  "homepage": "https://github.com/elio-centrique/WakStuff-V2#readme"
+  "homepage": "https://github.com/elio-centrique/WakStuff-V2#readme",
   "engines": {
     "node": "16.x"
   }
