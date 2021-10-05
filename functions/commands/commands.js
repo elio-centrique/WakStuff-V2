@@ -117,7 +117,7 @@ client.on('message', async message => {
                         let selectMessage = new Discord.MessageSelectMenu();
                         selectMessage.setPlaceholder(i18next.t("chooseNumber"))
                             .addOptions(options)
-                            .setCustomID("search");
+                            .setCustomId("search");
 
                         /*let embed = new Discord.MessageEmbed()
                             .setTitle(i18next.t("chooseNumber"))
@@ -219,7 +219,7 @@ client.on('message', async message => {
                     let selectMessage = new Discord.MessageSelectMenu();
                         selectMessage.setPlaceholder(i18next.t("chooseNumber"))
                             .addOptions(answer_list1)
-                            .setCustomID("search1");
+                            .setCustomId("search1");
 
                         /*let embed = new Discord.MessageEmbed()
                             .setTitle(i18next.t("chooseNumber"))
@@ -307,7 +307,7 @@ client.on('message', async message => {
                             let selectMessage = new Discord.MessageSelectMenu();
                                 selectMessage.setPlaceholder(i18next.t("chooseNumber"))
                                     .addOptions(answer_list2)
-                                    .setCustomID("search2");
+                                    .setCustomId("search2");
 
                                 /*let embed = new Discord.MessageEmbed()
                                     .setTitle(i18next.t("chooseNumber"))
