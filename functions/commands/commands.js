@@ -124,7 +124,7 @@ client.on('message', async message => {
                             .setDescription(description);
                         */
                         const filter = (interaction) => interaction.customID === selectMessage.customID;
-                        const collector = message.channel.createMessageComponentInteractionCollector({ filter, time: 120000 });
+                        const collector = message.channel.createMessageComponentCollector({ filter, time: 120000 });
                         collector.channel.send({
                             content: selectMessage.placeholder,
                             components: [{
@@ -226,7 +226,7 @@ client.on('message', async message => {
                             .setDescription(description);
                         */
                     const filter_1 = (interaction) => interaction.customID === selectMessage.customID;
-                    const collector_1 = message.channel.createMessageComponentInteractionCollector({ filter_1, time: 120000 });
+                    const collector_1 = message.channel.createMessageComponentCollector({ filter_1, time: 120000 });
                     collector_1.channel.send({
                         content: selectMessage.placeholder,
                         components: [{
@@ -314,7 +314,7 @@ client.on('message', async message => {
                                     .setDescription(description);
                                 */
                             const filter_2 = (interaction) => interaction.customID === selectMessage.customID;
-                            const collector_2 = message.channel.createMessageComponentInteractionCollector({ filter_2, time: 120000 });
+                            const collector_2 = message.channel.createMessageComponentCollector({ filter_2, time: 120000 });
                             collector_2.channel.send({
                                 content: selectMessage.placeholder,
                                 components: [{
