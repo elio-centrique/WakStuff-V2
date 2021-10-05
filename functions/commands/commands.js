@@ -123,7 +123,7 @@ client.on('message', async message => {
                             .setTitle(i18next.t("chooseNumber"))
                             .setDescription(description);
                         */
-                        const filter = (interaction) => interaction.customID === selectMessage.customID;
+                        const filter = (interaction) => interaction.customId === selectMessage.customId;
                         const collector = message.channel.createMessageComponentCollector({ filter, time: 120000 });
                         message.channel.send({
                             content: selectMessage.placeholder,
@@ -131,7 +131,7 @@ client.on('message', async message => {
                                 "type": "ACTION_ROW",
                                 components: [{
                                     "type": "SELECT_MENU",
-                                    "customID": selectMessage.customID,
+                                    "customId": selectMessage.customId,
                                     "options": selectMessage.options,
                                 }]
                             }],
@@ -225,7 +225,7 @@ client.on('message', async message => {
                             .setTitle(i18next.t("chooseNumber"))
                             .setDescription(description);
                         */
-                    const filter_1 = (interaction) => interaction.customID === selectMessage.customID;
+                    const filter_1 = (interaction) => interaction.customId === selectMessage.customId;
                     const collector_1 = message.channel.createMessageComponentCollector({ filter_1, time: 120000 });
                     collector_1.channel.send({
                         content: selectMessage.placeholder,
@@ -233,7 +233,7 @@ client.on('message', async message => {
                             "type": "ACTION_ROW",
                             components: [{
                                 "type": "SELECT_MENU",
-                                "customID": selectMessage.customID,
+                                "customId": selectMessage.customId,
                                 "options": selectMessage.options,
                             }]
                         }],
@@ -313,7 +313,7 @@ client.on('message', async message => {
                                     .setTitle(i18next.t("chooseNumber"))
                                     .setDescription(description);
                                 */
-                            const filter_2 = (interaction) => interaction.customID === selectMessage.customID;
+                            const filter_2 = (interaction) => interaction.customId === selectMessage.customId;
                             const collector_2 = message.channel.createMessageComponentCollector({ filter_2, time: 120000 });
                             collector_2.channel.send({
                                 content: selectMessage.placeholder,
@@ -321,7 +321,7 @@ client.on('message', async message => {
                                     "type": "ACTION_ROW",
                                     components: [{
                                         "type": "SELECT_MENU",
-                                        "customID": selectMessage.customID,
+                                        "customId": selectMessage.customId,
                                         "options": selectMessage.options,
                                     }]
                                 }],
