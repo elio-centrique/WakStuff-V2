@@ -125,7 +125,7 @@ client.on('message', async message => {
                         */
                         const filter = (interaction) => interaction.customID === selectMessage.customID;
                         const collector = message.channel.createMessageComponentCollector({ filter, time: 120000 });
-                        collector.channel.send({
+                        message.channel.send({
                             content: selectMessage.placeholder,
                             components: [{
                                 "type": "ACTION_ROW",
@@ -138,7 +138,7 @@ client.on('message', async message => {
                             ephemeral: true,
                         });
                         collector.on('collect', collected => {
-                            collector.channel.lastMessage.delete();
+                            message.channel.lastMessage.delete();
                             if (lang === "fr") {
                                 let embed_item = new Discord.MessageEmbed()
                                     .setTitle(list_found[parseInt(collected.values[0])].name_fr + " "  + i18next.t("level") + " " + list_found[parseInt(collected.values[0])].level)
