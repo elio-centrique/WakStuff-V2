@@ -84,7 +84,7 @@ client.on('message', async message => {
             } else {
                 if (list_found.length === 1) {
                     if (lang === 'fr') {
-                        let embed = new Client.MessageEmbed().setTitle(list_found[0].name_fr)
+                        let embed = new Discord.MessageEmbed().setTitle(list_found[0].name_fr)
                             .setDescription(list_found[0].get_message_stats(lang))
                             .setColor(list_found[0].color)
                             .addField("Description: ", list_found[0].description_fr)
