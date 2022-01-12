@@ -174,6 +174,7 @@ client.on('message', async message => {
         }
     }
 
+    /*
     if (command === 'compare') {
         let find_object1 = false
         let find_object2 = false
@@ -224,7 +225,7 @@ client.on('message', async message => {
                         /*let embed = new Discord.MessageEmbed()
                             .setTitle(i18next.t("chooseNumber"))
                             .setDescription(description);
-                        */
+                        */ /*
                     const filter_1 = (interaction) => interaction.customId === selectMessage.customId;
                     const collector_1 = message.channel.createMessageComponentCollector({ filter_1, time: 120000 });
                     collector_1.channel.send({
@@ -265,7 +266,7 @@ client.on('message', async message => {
                             message.channel.send({
                                 embeds: [embed_item.toJSON()]
                             });
-                            */
+                            */ /*
                             //collector.stop("finish")
                         }
                         collector_1.stop("finish")
@@ -312,7 +313,7 @@ client.on('message', async message => {
                                 /*let embed = new Discord.MessageEmbed()
                                     .setTitle(i18next.t("chooseNumber"))
                                     .setDescription(description);
-                                */
+                                */ /*
                             const filter_2 = (interaction) => interaction.customId === selectMessage.customId;
                             const collector_2 = message.channel.createMessageComponentCollector({ filter_2, time: 120000 });
                             collector_2.channel.send({
@@ -340,7 +341,7 @@ client.on('message', async message => {
                                     message.channel.send({
                                         embeds: [embed_item.toJSON()]
                                     });
-                                    */
+                                    */ /*
                                     //collector.stop("finish")
                                 } else {
                                     /*
@@ -353,7 +354,7 @@ client.on('message', async message => {
                                     message.channel.send({
                                         embeds: [embed_item.toJSON()]
                                     });
-                                    */
+                                    */ /*
                                     //collector.stop("finish")
                                 }
                                 collector_2.stop("finish")
@@ -478,6 +479,8 @@ client.on('message', async message => {
             });                
         }
     }
+    */
+    
     if(command === "help") {
         if(args.length === 0) {
             let embed_message = new Discord.MessageEmbed()
