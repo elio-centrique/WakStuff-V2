@@ -253,7 +253,7 @@ client.on('message', async message => {
                             message.channel.send({
                                 embeds: [embed_item.toJSON()]
                             });
-                            */
+                            */ /*
                             //collector.stop("finish")
                         } else {
                             /*
@@ -488,7 +488,7 @@ client.on('message', async message => {
                 .setDescription(i18next.t("help_precisions"))
                 .setColor("#FFFFFF")
                 .addField("Configuration ", "**" + prefix + i18next.t("help_configure") + "\n**" + prefix + i18next.t("help_language") + "\n**" + prefix + i18next.t("help_prefix") , false)
-                .addField("Objects ", "**" + prefix + i18next.t("help_search") + "\n**" + prefix + i18next.t("help_compare"), false)
+                .addField("Objects ", "**" + prefix + i18next.t("help_search") + "\n**", false)
                 .addField("Help ", "**" + prefix + i18next.t("help_help"), false)
                 .addField("Almanax ", "**" + prefix + i18next.t("help_almanax"), false)
             message.channel.send({embeds: [embed_message]});
