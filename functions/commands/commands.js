@@ -83,20 +83,26 @@ client.on('message', async message => {
                 message.channel.send(args.join(' ') + i18next.t("noObject"));
             } else {
                 if (list_found.length === 1) {
-                    if (lang === 'fr') {
-                        let embed = new Discord.MessageEmbed().setTitle(list_found[0].name_fr + " "  + i18next.t("level") + " " + list_found[0].level)
-                            .setDescription(list_found[0].get_message_stats(lang))
-                            .setColor(list_found[0].color)
-                            .addField("Description: ", list_found[0].description_fr)
-                            .setImage(list_found[0].image)
-                        message.channel.send({embeds: [embed.toJSON()]});
-                    } else {
-                        let embed = new Discord.MessageEmbed().setTitle(list_found[0].name_en + " "  + i18next.t("level") + " " + list_found[0].level)
-                            .setDescription(list_found[0].get_message_stats(lang))
-                            .setColor(list_found[0].color)
-                            .addField("Description: ", list_found[0].description_en)
-                            .setImage(list_found[0].image)
-                        message.channel.send({embeds: [embed.toJSON()]});
+                    try {
+                        if (lang === 'fr') {
+                            let embed = new Discord.MessageEmbed().setTitle(list_found[0].name_fr + " "  + i18next.t("level") + " " + list_found[0].level)
+                                .setDescription(list_found[0].get_message_stats(lang))
+                                .setColor(list_found[0].color)
+                                .addField("Description: ", list_found[0].description_fr)
+                                .setImage(list_found[0].image)
+                            message.channel.send({embeds: [embed.toJSON()]});
+                        } else {
+                            let embed = new Discord.MessageEmbed().setTitle(list_found[0].name_en + " "  + i18next.t("level") + " " + list_found[0].level)
+                                .setDescription(list_found[0].get_message_stats(lang))
+                                .setColor(list_found[0].color)
+                                .addField("Description: ", list_found[0].description_en)
+                                .setImage(list_found[0].image)
+                            message.channel.send({embeds: [embed.toJSON()]});
+                        }
+                    } catch(e) {
+                        message.member.createDM().then(dm => {
+                            dm.send("can't send message in #" + message.channel.name + ". Please check my permission in this channel.");
+                        });
                     }
                 } else {
                     if (list_found.length > 25) {
@@ -139,28 +145,34 @@ client.on('message', async message => {
                         });
                         collector.on('collect', collected => {
                             message.channel.lastMessage.delete();
-                            if (lang === "fr") {
-                                let embed_item = new Discord.MessageEmbed()
-                                    .setTitle(list_found[parseInt(collected.values[0])].name_fr + " "  + i18next.t("level") + " " + list_found[parseInt(collected.values[0])].level)
-                                    .setDescription(list_found[parseInt(collected.values[0])].get_message_stats(lang))
-                                    .setColor(list_found[parseInt(collected.values[0])].color)
-                                    .addField("Description: ", list_found[parseInt(collected.values[0])].description_fr)
-                                    .setImage(list_found[parseInt(collected.values[0])].image)
-                                message.channel.send({
-                                    embeds: [embed_item.toJSON()]
+                            try {
+                                if (lang === "fr") {
+                                    let embed_item = new Discord.MessageEmbed()
+                                        .setTitle(list_found[parseInt(collected.values[0])].name_fr + " "  + i18next.t("level") + " " + list_found[parseInt(collected.values[0])].level)
+                                        .setDescription(list_found[parseInt(collected.values[0])].get_message_stats(lang))
+                                        .setColor(list_found[parseInt(collected.values[0])].color)
+                                        .addField("Description: ", list_found[parseInt(collected.values[0])].description_fr)
+                                        .setImage(list_found[parseInt(collected.values[0])].image)
+                                    message.channel.send({
+                                        embeds: [embed_item.toJSON()]
+                                    });
+                                    collector.stop("finish")
+                                } else {
+                                    let embed_item = new Discord.MessageEmbed()
+                                        .setTitle(list_found[parseInt(collected.values[0])].name_en + " " + i18next.t("level") + " " + list_found[parseInt(collected.values[0])].level)
+                                        .setDescription(list_found[parseInt(collected.values[0])].get_message_stats(lang))
+                                        .setColor(list_found[parseInt(collected.values[0])].color)
+                                        .addField("Description: ", list_found[parseInt(collected.values[0])].description_en)
+                                        .setImage(list_found[parseInt(collected.values[0])].image)
+                                    message.channel.send({
+                                        embeds: [embed_item.toJSON()]
+                                    });
+                                    collector.stop("finish")
+                                }
+                            } catch(e) {
+                                message.member.createDM().then(dm => {
+                                    dm.send("can't send message in #" + message.channel.name + ". Please check my permission in this channel.");
                                 });
-                                collector.stop("finish")
-                            } else {
-                                let embed_item = new Discord.MessageEmbed()
-                                    .setTitle(list_found[parseInt(collected.values[0])].name_en + " " + i18next.t("level") + " " + list_found[parseInt(collected.values[0])].level)
-                                    .setDescription(list_found[parseInt(collected.values[0])].get_message_stats(lang))
-                                    .setColor(list_found[parseInt(collected.values[0])].color)
-                                    .addField("Description: ", list_found[parseInt(collected.values[0])].description_en)
-                                    .setImage(list_found[parseInt(collected.values[0])].image)
-                                message.channel.send({
-                                    embeds: [embed_item.toJSON()]
-                                });
-                                collector.stop("finish")
                             }
                         });
                         collector.on('end', (collected, reason) => {
