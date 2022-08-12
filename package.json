@@ -4,7 +4,7 @@
   "description": "retrieve and compare gears from Wakfu",
   "main": "Wakstuff.js",
   "dependencies": {
-    "axios": "^0.21.1",
+    "axios": "^0.21.2",
     "cheerio": "^1.0.0-rc.5",
     "discord.js": "^13.0.0-dev.fe6cc0c.1625227356",
     "dotenv": "^9.0.0",
