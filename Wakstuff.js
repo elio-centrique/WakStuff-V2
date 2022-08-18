@@ -16,7 +16,7 @@ dotenv.config();
 //#region const declarations
 const client = new Client({ intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES] });
 const default_prefix = "w!";
-const uri = "mongodb+srv://" + process.env['db_user'] + ":" +  process.env['db_pass'] + "@" +  process.env['db_name'] + "-l6ey6.gcp.mongodb.net/test?retryWrites=true&w=majority";
+const uri = "mongodb+srv://" + process.env['db_user'] + ":" +  process.env['db_pass'] + "@" +  process.env['db_name'] + ".unr6gk4.mongodb.net/?retryWrites=true&w=majority";
 const mongo_client = new MongoClient(uri, { useNewUrlParser: true });
 let mongo_collection;
 
