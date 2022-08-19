@@ -69,6 +69,130 @@ client.on('message', async message => {
             let find_object = false;
             let list_found = [];
 
+            list_items.forEach(item => {
+                if(item.name_fr && item.name_fr.toLowerCase().includes(args.join(" ").toLowerCase())) {
+                    find_object = true;
+                    list_found.push(item);
+                } else if(item.name_en && item.name_en.toLowerCase().includes(args.join(" ").toLowerCase())) {
+                    find_object = true;
+                    list_found.push(item);
+                }
+            })
+
+            if(!find_object) {
+                message.channel.send(args.join(' ') + i18next.t("noObject"));
+            } else {
+                if (list_found.length === 1) {
+                    try {
+                        if (lang === 'fr') {
+                            let embed = new Discord.MessageEmbed().setTitle(list_found[0].name_fr + " "  + i18next.t("level") + " " + list_found[0].level)
+                                .setDescription(list_found[0].get_message_stats(lang))
+                                .setColor(list_found[0].color)
+                                .addField("Description: ", list_found[0].description_fr)
+                                .setImage(list_found[0].image)
+                            message.channel.send({embeds: [embed.toJSON()]});
+                        } else {
+                            let embed = new Discord.MessageEmbed().setTitle(list_found[0].name_en + " "  + i18next.t("level") + " " + list_found[0].level)
+                                .setDescription(list_found[0].get_message_stats(lang))
+                                .setColor(list_found[0].color)
+                                .addField("Description: ", list_found[0].description_en)
+                                .setImage(list_found[0].image)
+                            message.channel.send({embeds: [embed.toJSON()]});
+                        }
+                    } catch(e) {
+                        message.member.createDM().then(dm => {
+                            dm.send("can't send message in #" + message.channel.name + ". Please check my permission in this channel.");
+                        });
+                    }
+                } else {
+                    if (list_found.length > 25) {
+                        message.channel.send(i18next.t("toomanyobjects"));
+                    } else {
+                        let options = []
+                        let i = 0;
+                        list_found.forEach(item_found => {
+                            let option
+                            if (lang === "fr") {
+                                option = new Option.Option(item_found.name_fr, i.toString(), i18next.t("level") + " " + item_found.level.toString() + " " + i18next.t(item_found.rarity.toString()), null, false);
+                            } else {
+                                option = new Option.Option(item_found.name_en, i.toString(), i18next.t("level") + " " + item_found.level.toString() + " " + i18next.t(item_found.rarity.toString()), null, false);
+                            }
+                            options.push(option);
+                            i++;
+                        });
+                        let selectMessage = new Discord.MessageSelectMenu();
+                        selectMessage.setPlaceholder(i18next.t("chooseNumber"))
+                            .addOptions(options)
+                            .setCustomId("search");
+
+                        /*let embed = new Discord.MessageEmbed()
+                            .setTitle(i18next.t("chooseNumber"))
+                            .setDescription(description);
+                        */
+                        const filter = (interaction) => interaction.customId === selectMessage.customId;
+                        const collector = message.channel.createMessageComponentCollector({ filter, time: 120000 });
+                        message.channel.send({
+                            content: selectMessage.placeholder,
+                            components: [{
+                                "type": "ACTION_ROW",
+                                components: [{
+                                    "type": "SELECT_MENU",
+                                    "customId": selectMessage.customId,
+                                    "options": selectMessage.options,
+                                }]
+                            }],
+                            ephemeral: true,
+                        });
+                        collector.on('collect', collected => {
+                            message.channel.lastMessage.delete();
+                            try {
+                                if (lang === "fr") {
+                                    let embed_item = new Discord.MessageEmbed()
+                                        .setTitle(list_found[parseInt(collected.values[0])].name_fr + " "  + i18next.t("level") + " " + list_found[parseInt(collected.values[0])].level)
+                                        .setDescription(list_found[parseInt(collected.values[0])].get_message_stats(lang))
+                                        .setColor(list_found[parseInt(collected.values[0])].color)
+                                        .addField("Description: ", list_found[parseInt(collected.values[0])].description_fr)
+                                        .setImage(list_found[parseInt(collected.values[0])].image)
+                                    message.channel.send({
+                                        embeds: [embed_item.toJSON()]
+                                    });
+                                    collector.stop("finish")
+                                } else {
+                                    let embed_item = new Discord.MessageEmbed()
+                                        .setTitle(list_found[parseInt(collected.values[0])].name_en + " " + i18next.t("level") + " " + list_found[parseInt(collected.values[0])].level)
+                                        .setDescription(list_found[parseInt(collected.values[0])].get_message_stats(lang))
+                                        .setColor(list_found[parseInt(collected.values[0])].color)
+                                        .addField("Description: ", list_found[parseInt(collected.values[0])].description_en)
+                                        .setImage(list_found[parseInt(collected.values[0])].image)
+                                    message.channel.send({
+                                        embeds: [embed_item.toJSON()]
+                                    });
+                                    collector.stop("finish")
+                                }
+                            } catch(e) {
+                                message.member.createDM().then(dm => {
+                                    dm.send("can't send message in #" + message.channel.name + ". Please check my permission in this channel.");
+                                });
+                            }
+                        });
+                        collector.on('end', (collected, reason) => {
+                            if(reason === "time"){
+                                message.channel.send(i18next.t("timesup"))
+                            }
+                        });
+                    }
+                }
+            }
+        }
+    }
+    
+    if (command === 'searchjob') {
+        if (args.length < 1) {
+            return message.channel.send(i18next.t('notenougharguments'));
+        } else if (args.length >= 1) {
+            let find_object = false;
+            let list_found = [];
+
             list_jobitems.forEach(jobitem => {
                 if(jobitem.name_fr && jobitem.name_fr.toLowerCase().includes(args.join(" ").toLowerCase())) {
                     find_object = true;
