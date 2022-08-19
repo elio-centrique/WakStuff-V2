@@ -221,12 +221,12 @@ function load_itemslist() {
                     description_fr,
                     description_en,
                     "https://vertylo.github.io/wakassets/items/" + jobitem['definition']['graphicParameters']['gfxId'].toString() + ".png"
-                ));
-        });
+                  ));
+                });
 
-    }
+                  console.log("jobitems loaded! ✔");
+            });
 
-  )
     fs.readFile('assets/JSON/items.json', (err, items) => {
         parsed_items = JSON.parse(items);
         fs.readFile('assets/JSON/actions.json', (err, actions) => {
