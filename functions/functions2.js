@@ -175,7 +175,7 @@ function load_itemslist() {
     let parsed_items;
     let parsed_actions;
     let parsed_jobitems;
-    fs.readFile('assets/JSON/jobItems.json', (err,jobItems) => {
+    fs.readFile('assets/JSON/jobsItems.json', (err,jobItems) => {
         parsed_jobitems = JSON.parse(jobItems);
         console.log("Parsing Jobs: ✔");
 
