@@ -1,5 +1,5 @@
 class JobItem {
-    constructor(name_fr, name_en, rarity, color, level, description_fr, description_en, image) {
+    constructor(name_fr, name_en, rarity, color, level, loc, description_fr, description_en, image) {
         this.name_fr = name_fr;
         this.name_en = name_en;
         this.rarity = rarity;
