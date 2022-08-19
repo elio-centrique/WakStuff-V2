@@ -211,6 +211,11 @@ function load_itemslist() {
                     name_en = jobitem["title"]["en"];
                 }
 
+                let loc = ""
+                if(jobitem['definition']['loc'] != null) {
+                    loc = "*" + jobitem['definition']['loc'] + "*";
+                }
+
                 //console.log(sorted_stats_en)
                 list_jobitems.push(new JobItem.JobItem(
                     name_fr,
@@ -218,6 +223,7 @@ function load_itemslist() {
                     rarity,
                     color,
                     level,
+                    loc,
                     description_fr,
                     description_en,
                     "https://vertylo.github.io/wakassets/items/" + jobitem['definition']['graphicParameters']['gfxId'].toString() + ".png"

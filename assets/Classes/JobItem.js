@@ -5,6 +5,7 @@ class JobItem {
         this.rarity = rarity;
         this.color = color;
         this.level = level;
+        this.loc = loc;
         this.description_fr = description_fr;
         this.description_en = description_en;
         this.image = image;
