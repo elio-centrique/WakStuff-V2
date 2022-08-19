@@ -181,7 +181,7 @@ function load_itemslist() {
 
         parsed_jobitems.forEach(jobitem => {
           let rarity_number = jobitem['definition']['rarity'];
-          let rarity = parseInt(jobitem['definition']['rarity']);
+          let rarity = rarity_number;
           let color;
           let level = jobitem['definition']['level'];
           switch(rarity_number) {
