@@ -209,14 +209,12 @@ client.on('message', async message => {
                     try {
                         if (lang === 'fr') {
                             let embed = new Discord.MessageEmbed().setTitle(list_found[0].name_fr + " "  + i18next.t("level") + " " + list_found[0].level)
-                                .setDescription(list_found[0].get_message_stats(lang))
                                 .setImage(list_found[0].image)
                                 .addField("Description: ", list_found[0].description_fr)
 
                             message.channel.send({embeds: [embed.toJSON()]});
                         } else {
                             let embed = new Discord.MessageEmbed().setTitle(list_found[0].name_en + " "  + i18next.t("level") + " " + list_found[0].level)
-                                .setDescription(list_found[0].get_message_stats(lang))
                                 .setImage(list_found[0].image)
                                 .addField("Description: ", list_found[0].description_en)
                             message.channel.send({embeds: [embed.toJSON()]});
