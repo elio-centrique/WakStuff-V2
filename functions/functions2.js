@@ -183,10 +183,7 @@ function load_itemslist() {
           let rarity_number = jobitem['definition']['rarity'];
           let rarity = rarity_number;
           let color;
-          let loc = jobitem['definition']['loc'];
-          if(jobitem['definition']['loc'] == null) {
-          loc = "inconnue";
-        };
+
           let level = jobitem['definition']['level'];
           switch(rarity_number) {
               case 1:
@@ -214,6 +211,11 @@ function load_itemslist() {
                     name_fr = jobitem["title"]["fr"];
                     name_en = jobitem["title"]["en"];
                 }
+
+                let loc = ""
+                if(jobitem['definition']['loc'] == null) {
+                  loc = "inconnue";
+              }
 
 
                 //console.log(sorted_stats_en)
