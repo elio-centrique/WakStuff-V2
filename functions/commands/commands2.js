@@ -213,6 +213,8 @@ client.on('message', async message => {
                                 .addField("Description: ", list_found[0].description_fr)
                                 if (list_found[0].loc != null ) {
                                   .addField("Localisation: ", list_found[0].loc.toString())
+                                } else {
+                                  .addField("Localisation: inconnue")
                                 }
                             message.channel.send({embeds: [embed.toJSON()]});
                         } else {
