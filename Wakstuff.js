@@ -25,6 +25,7 @@ mongo_client.connect(err => {
     mongo_collection = mongo_client.db("Wakstuff").collection("guilds");
 });
 
+const list_jobitems = []
 const list_items = []
 
 const sorted_ids = [31, 56, 41, 57, 191, 192, 161, 160, 184, 20, 166, 162, 167, 163, 175, 174, 173, 174, 176, 171, 150, 168, 126, 875, 120, 130, 122, 132, 123, 124, 125, 149, 151, 1068, 26, 180, 181, 1050, 1051, 1052, 1053, 1055, 1056, 1060, 1061, 80, 100, 1069, 82, 97, 83, 98, 84, 96, 85, 71, 988, 1062, 1063, 234, 2000, 2001, 2002, 2006, 2008]
@@ -35,7 +36,7 @@ let prefix = "";
 
 //#region init
 eval(fs.readFileSync('./functions/i18n/i18n.js') + '');
-eval(fs.readFileSync('./functions/functions.js') + '');
+eval(fs.readFileSync('./functions/functions2.js') + '');
 init_i18n();
 load_itemslist();
  //#endregion
@@ -46,6 +47,6 @@ load_itemslist();
      console.log("ready to serve");
  })
 
- eval(fs.readFileSync('./functions/commands/commands.js') + '');
+ eval(fs.readFileSync('./functions/commands/commands2.js') + '');
  client.login(process.env["token"]);
  //#endregion
