@@ -212,7 +212,7 @@ function load_itemslist() {
                 }
 
                 //console.log(sorted_stats_en)
-                list_items.push(new JobItem.JobItem(
+                list_jobitems.push(new JobItem.JobItem(
                     name_fr,
                     name_en,
                     rarity,
