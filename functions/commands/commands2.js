@@ -62,7 +62,7 @@ client.on('message', async message => {
 
     }
 
-    if (command === 'searchjob') {
+    if (command === 'search') {
         if (args.length < 1) {
             return message.channel.send(i18next.t('notenougharguments'));
         } else if (args.length >= 1) {
