@@ -123,7 +123,7 @@ client.on('message', async message => {
                         let selectMessage = new Discord.MessageSelectMenu();
                         selectMessage.setPlaceholder(i18next.t("chooseNumber"))
                             .addOptions(options)
-                            .setCustomId("search");
+                            .setCustomId("searchjob");
 
                         /*let embed = new Discord.MessageEmbed()
                             .setTitle(i18next.t("chooseNumber"))

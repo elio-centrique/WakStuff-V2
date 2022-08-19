@@ -184,6 +184,7 @@ function load_itemslist() {
           let rarity
           let color;
           let level;
+          level = parseInt(jobitem['definition']['level']);
           switch(rarity_number) {
               case 1:
                   color = 16777215;
