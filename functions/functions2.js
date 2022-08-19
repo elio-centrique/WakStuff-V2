@@ -211,10 +211,7 @@ function load_itemslist() {
                     name_en = jobitem["title"]["en"];
                 }
 
-                let loc = ""
-                if(jobitem['definition']['loc'] != null) {
-                    loc = "*" + jobitem['definition']['loc'] + "*";
-                }
+                let loc = jobitem['definition']['loc'];
 
                 //console.log(sorted_stats_en)
                 list_jobitems.push(new JobItem.JobItem(
