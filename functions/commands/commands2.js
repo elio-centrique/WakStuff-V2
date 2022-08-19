@@ -110,12 +110,12 @@ client.on('message', async message => {
                     } else {
                         let options = []
                         let i = 0;
-                        list_found.forEach(item_found => {
+                        list_found.forEach(jobitem_found => {
                             let option
                             if (lang === "fr") {
-                                option = new Option.Option(item_found.name_fr, i.toString(), i18next.t("level") + " " + item_found.level.toString() + " " + i18next.t(item_found.rarity.toString()), null, false);
+                                option = new Option.Option(jobitem_found.name_fr, i.toString(), i18next.t("level") + " " + jobitem_found.level.toString() + " " + i18next.t(jobitem_found.rarity.toString()), null, false);
                             } else {
-                                option = new Option.Option(item_found.name_en, i.toString(), i18next.t("level") + " " + item_found.level.toString() + " " + i18next.t(item_found.rarity.toString()), null, false);
+                                option = new Option.Option(jobitem_found.name_en, i.toString(), i18next.t("level") + " " + jobitem_found.level.toString() + " " + i18next.t(jobitem_found.rarity.toString()), null, false);
                             }
                             options.push(option);
                             i++;
