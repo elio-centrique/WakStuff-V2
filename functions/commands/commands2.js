@@ -197,8 +197,6 @@ client.on('message', async message => {
                 if(jobitem.name_fr && jobitem.name_fr.toLowerCase().includes(args.join(" ").toLowerCase())) {
                     find_object = true;
                     list_found.push(jobitem);
-                    if(jobitem['loc'] === null) {
-                        loc = "";
                 } else if(jobitem.name_en && jobitem.name_en.toLowerCase().includes(args.join(" ").toLowerCase())) {
                     find_object = true;
                     list_found.push(jobitem);
@@ -215,18 +213,14 @@ client.on('message', async message => {
                             let embed = new Discord.MessageEmbed().setTitle(list_found[0].name_fr + " "  + i18next.t("level") + " " + list_found[0].level)
                                 .setImage(list_found[0].image)
                                 .addField("Description: ", list_found[0].description_fr)
-                                if (list_found[0].loc != null ) {
-                                  .addField("Localisation: ", list_found[0].loc.toString())
-                                } else {
-                                  .addField("Localisation: inconnue")
-                                }
+                                .addField("Localisation: ", list_found[0].loc)
                             message.channel.send({embeds: [embed.toJSON()]});
                         } else {
                             let embed = new Discord.MessageEmbed().setTitle(list_found[0].name_en + " "  + i18next.t("level") + " " + list_found[0].level)
                                 .setImage(list_found[0].image)
                                 .addField("Description: ", list_found[0].description_en)
                                 if (list_found[0].loc != null ) {
-                                  .addField("Localisation: ", list_found[0].loc.toString())
+                                  .addField("Localisation: ", list_found[0].loc)
                                 }
                             message.channel.send({embeds: [embed.toJSON()]});
                         }

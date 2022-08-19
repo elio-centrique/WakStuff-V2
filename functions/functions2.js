@@ -184,6 +184,8 @@ function load_itemslist() {
           let rarity = rarity_number;
           let color;
           let loc = jobitem['definition']['loc'];
+          if(jobitem['loc'] == null) {
+          loc = "";};
           let level = jobitem['definition']['level'];
           switch(rarity_number) {
               case 1:
