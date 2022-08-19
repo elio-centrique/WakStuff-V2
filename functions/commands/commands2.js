@@ -272,6 +272,7 @@ client.on('message', async message => {
                                     let embed_item = new Discord.MessageEmbed()
                                         .setTitle(list_found[parseInt(collected.values[0])].name_fr + " "  + i18next.t("level") + " " + list_found[parseInt(collected.values[0])].level)
                                         .addField("Description: ", list_found[parseInt(collected.values[0])].description_fr)
+                                        .addField("Localisation: ", list_found[parseInt(collected.values[0])].loc)
                                         .setImage(list_found[parseInt(collected.values[0])].image)
                                     message.channel.send({
                                         embeds: [embed_item.toJSON()]
@@ -281,6 +282,7 @@ client.on('message', async message => {
                                     let embed_item = new Discord.MessageEmbed()
                                         .setTitle(list_found[parseInt(collected.values[0])].name_en + " " + i18next.t("level") + " " + list_found[parseInt(collected.values[0])].level)
                                         .addField("Description: ", list_found[parseInt(collected.values[0])].description_en)
+                                        .addField("Localisation: ", list_found[parseInt(collected.values[0])].loc)
                                         .setImage(list_found[parseInt(collected.values[0])].image)
                                     message.channel.send({
                                         embeds: [embed_item.toJSON()]
