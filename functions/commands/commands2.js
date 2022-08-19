@@ -69,13 +69,13 @@ client.on('message', async message => {
             let find_object = false;
             let list_found = [];
 
-            list_items.forEach(item => {
-                if(item.name_fr && item.name_fr.toLowerCase().includes(args.join(" ").toLowerCase())) {
+            list_jobitems.forEach(jobitem => {
+                if(jobitem.name_fr && jobitem.name_fr.toLowerCase().includes(args.join(" ").toLowerCase())) {
                     find_object = true;
-                    list_found.push(item);
-                } else if(item.name_en && item.name_en.toLowerCase().includes(args.join(" ").toLowerCase())) {
+                    list_found.push(jobitem);
+                } else if(jobitem.name_en && jobitem.name_en.toLowerCase().includes(args.join(" ").toLowerCase())) {
                     find_object = true;
-                    list_found.push(item);
+                    list_found.push(jobitem);
                 }
             })
 
