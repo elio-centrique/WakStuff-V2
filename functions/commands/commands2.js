@@ -86,11 +86,14 @@ client.on('message', async message => {
                     try {
                         if (lang === 'fr') {
                             let embed = new Discord.MessageEmbed().setTitle(list_found[0].name_fr + " "  + i18next.t("level") + " " + list_found[0].level)
-                                .setImage(list_found[0].image)
+                                .setDescription(list_found[0].get_message_stats(lang))
                                 .addField("Description: ", list_found[0].description_fr)
+                                .setImage(list_found[0].image)
                             message.channel.send({embeds: [embed.toJSON()]});
                         } else {
                             let embed = new Discord.MessageEmbed().setTitle(list_found[0].name_en + " "  + i18next.t("level") + " " + list_found[0].level)
+                                .setDescription(list_found[0].get_message_stats(lang))
+                                .addField("Description: ", list_found[0].description_en)
                                 .setImage(list_found[0].image)
                             message.channel.send({embeds: [embed.toJSON()]});
                         }
