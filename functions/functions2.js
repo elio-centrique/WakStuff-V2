@@ -196,9 +196,14 @@ function load_itemslist() {
                 }
                 //fin 0.1
 
-                let description_fr = "*" + jobitem['description']["fr"] + "*";
-                let description_en = "*" + jobitem['description']["en"] + "*"
-
+                let description_fr = ""
+                if(jobitem['description'] != null) {
+                    description_fr = "*" + jobitem['description']["fr"] + "*";
+                }
+                let description_en = ""
+                if(jobitem['description'] != null) {
+                    description_en = "*" + jobitem['description']["en"] + "*";
+                }
 
                 let name_fr, name_en;
                 if(jobitem["title"]) {
