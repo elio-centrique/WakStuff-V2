@@ -113,7 +113,7 @@ client.on('message', async message => {
                         list_found.forEach(item_found => {
                             let option
                             if (lang === "fr") {
-                                option = new Option.Option(item_found.name_fr, i.toString(), i18next.t("level") + " " + item_found.level.toString() + " " + i18next.t(item_found.rarity.toString()), null, false);
+                                option = new Option.Option(item_found.name_fr, i.toString(), i18next.t("level") + " " + item_found.definition.level.toString() + " " + i18next.t(item_found.definition.rarity.toString()), null, false);
                             } else {
                                 option = new Option.Option(item_found.name_en, i.toString(), i18next.t("level") + " " + item_found.level.toString() + " " + i18next.t(item_found.rarity.toString()), null, false);
                             }
