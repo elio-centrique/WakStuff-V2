@@ -201,7 +201,7 @@ client.on('message', async message => {
                     list_found.push(jobitem);
                 };
                 }
-            })
+            )
 
             if(!find_object) {
                 message.channel.send(args.join(' ') + i18next.t("noObject"));
