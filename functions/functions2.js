@@ -220,7 +220,7 @@ function load_itemslist() {
                     level,
                     description_fr,
                     description_en,
-                    "https://vertylo.github.io/wakassets/items/" + item['definition']['graphicParameters']['gfxId'].toString() + ".png"
+                    "https://vertylo.github.io/wakassets/items/" + jobitem['definition']['graphicParameters']['gfxId'].toString() + ".png"
                 ));
         });
 
