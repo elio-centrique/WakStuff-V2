@@ -185,7 +185,6 @@ client.on('message', async message => {
             }
         }
     }
-
     if (command === 'searchjob') {
         if (args.length < 1) {
             return message.channel.send(i18next.t('notenougharguments'));
