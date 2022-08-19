@@ -193,12 +193,16 @@ client.on('message', async message => {
             let list_found = [];
 
             list_jobitems.forEach(jobitem => {
+              let loc = "";
                 if(jobitem.name_fr && jobitem.name_fr.toLowerCase().includes(args.join(" ").toLowerCase())) {
                     find_object = true;
                     list_found.push(jobitem);
+                    if(jobitem['loc'] === null) {
+                        loc = "";
                 } else if(jobitem.name_en && jobitem.name_en.toLowerCase().includes(args.join(" ").toLowerCase())) {
                     find_object = true;
                     list_found.push(jobitem);
+                };
                 }
             })
 
