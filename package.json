@@ -21,10 +21,18 @@
   },
   "homepage": "https://github.com/elio-centrique/WakStuff-V2#readme",
   "dependencies": {
-    "discord.js": "^12.2.0",
-    "fs": "0.0.1-security",
-    "i18next": "^19.6.2",
-    "mongodb": "^3.5.9",
-    "node-fetch": "^2.6.0"
+    "@discordjs/builders": "^1.1.0",
+    "@discordjs/rest": "^1.0.1",
+    "bufferutil": "^4.0.6",
+    "discord.js": "^14.2.0",
+    "dotenv": "^16.0.1",
+    "erlpack": "github:discord/erlpack",
+    "fs": "*",
+    "i18next": "*",
+    "mongodb": "*",
+    "node-fetch": "*",
+    "nodemon": "^2.0.19",
+    "utf-8-validate": "^5.0.9",
+    "zlib-sync": "^0.1.7"
   }
 }

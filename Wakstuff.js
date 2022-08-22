@@ -1,15 +1,17 @@
 
 //#region Imports & requires
+const dotenv = require("dotenv")
+dotenv.config();
 const i18next = require('i18next');
-const Discord = require('discord.js');
+const {Discord, EmbedBuilder , Client, GatewayIntentBits , Interaction, MessageSelectMenu, MessageActionRow} = require('discord.js');
 const MongoClient = require('mongodb').MongoClient;
 const fs = require("fs");
 const fetch = require("node-fetch");
+const {Option} = require("./assets/Classes/Option");
 //#endregion
 
 //#region const declarations
-const client = new Discord.Client();
-const default_prefix = "w!";
+const client = new Client({intents: [GatewayIntentBits.Guilds] });
 const uri = "mongodb+srv://" + process.env['db_user'] + ":" +  process.env['db_pass'] + "@" +  process.env['db_name'] + "-l6ey6.gcp.mongodb.net/test?retryWrites=true&w=majority";
 const mongo_client = new MongoClient(uri, { useNewUrlParser: true });
 let mongo_collection;
@@ -35,11 +37,10 @@ load_itemslist();
  //#endregion
 
  //#region booting
-
  client.once('ready', () => {
      console.log("ready to serve");
  })
 
  eval(fs.readFileSync('./functions/commands/commands.js') + '');
- client.login(process.env["token"]);
+ client.login(process.env.token);
  //#endregion

@@ -34,49 +34,14 @@ async function set_language(message, collection, language) {
             await collection.updateOne({id_server: {$eq: message.guild.id}}, {$set: {language: language}})
             console.log(message.guild.name + i18next.t('guildupdated'))
             i18next.changeLanguage(language);
-            message.channel.send(i18next.t('updatedlanguageguild') + language)
+            message.editReply(i18next.t('updatedlanguageguild') + language)
         } else {
             await collection.insertOne({id_server: message.guild.id, language: language})
             i18next.changeLanguage(language);
             console.log(message.guild.name + i18next.t('guildconfigurated'));
-            message.channel.send(i18next.t('configuratedguild'))
+            message.editReply(i18next.t('configuratedguild'))
         }
         return language;
-    } catch(e) {
-        console.log(i18next.t("failsetlanguage") + e);
-    }
-}
-
-async function get_prefix(message, collection) {
-    try {
-        let result = await collection.findOne({id_server: {$eq: message.guild.id}})
-        if(result && result.id_server === message.guild.id) {
-            if(result.prefix) {
-                return result.prefix;
-            } else {
-                return "w!"
-            }
-        } else {
-            return "w!"
-        }
-    } catch(e) {
-        console.log(i18next.t("failgetprefix") + e);
-    }
-}
-
-async function set_prefix(message, a_prefix, collection) {
-    try {
-        let result = await collection.findOne({id_server: {$eq: message.guild.id}})
-        if(result && result.id_server === message.guild.id) {
-            await collection.updateOne({id_server: {$eq: message.guild.id}}, {$set: {prefix: a_prefix}})
-            console.log(message.guild.name + i18next.t('guildupdated'))
-            message.channel.send(i18next.t('updatedprefixguild') + a_prefix)
-        } else {
-            await collection.insertOne({id_server: message.guild.id, language: "en", prefix: a_prefix})
-            console.log(message.guild.name + i18next.t('guildconfigurated'));
-            message.channel.send(i18next.t('configuratedguild'))
-        }
-        return a_prefix;
     } catch(e) {
         console.log(i18next.t("failsetlanguage") + e);
     }
@@ -95,6 +60,7 @@ function load_itemslist() {
 
             //#region items creation. 
             parsed_items.forEach(item => {
+                let id = item["definition"]["item"]["id"]
                 let rarity_number = item['definition']['item']['baseParameters']['rarity'];
                 let rarity
                 let color;
@@ -287,6 +253,7 @@ function load_itemslist() {
 
                 //console.log(sorted_stats_en)
                 list_items.push(new Item.Item(
+                    id,
                     name_fr, 
                     name_en, 
                     rarity, 
