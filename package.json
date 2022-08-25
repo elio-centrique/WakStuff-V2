@@ -4,17 +4,26 @@
   "description": "retrieve and compare gears from Wakfu",
   "main": "Wakstuff.js",
   "dependencies": {
+    "@discordjs/builders": "^1.1.0",
+    "@discordjs/rest": "^1.0.1",
     "axios": "^0.21.2",
+    "bufferutil": "^4.0.6",
     "cheerio": "^1.0.0-rc.5",
-    "discord.js": "^13.10.2",
-    "dotenv": "^9.0.0",
-    "fs": "^0.0.1-security",
-    "i18next": "^20.1.0",
-    "jsonframe-cheerio": "^3.0.1",
-    "mongodb": "^3.6.5",
-    "node-fetch": "^2.6.7"
+    "discord.js": "^14.2.0",
+    "dotenv": "^16.0.1",
+    "erlpack": "github:discord/erlpack",
+    "fs": "*",
+    "i18next": "*",
+    "jsonframe-cheerio": "^1.1.3",
+    "moment": "^2.29.4",
+    "moment-timezone": "^0.5.37",
+    "mongodb": "*",
+    "node-fetch": "*",
+    "node-fetch-npm": "^2.0.4",
+    "nodemon": "^2.0.19",
+    "utf-8-validate": "^5.0.9",
+    "zlib-sync": "^0.1.7"
   },
-  "devDependencies": {},
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -32,22 +41,7 @@
     "url": "https://github.com/elio-centrique/WakStuff-V2/issues"
   },
   "homepage": "https://github.com/elio-centrique/WakStuff-V2#readme",
-  "dependencies": {
-    "@discordjs/builders": "^1.1.0",
-    "@discordjs/rest": "^1.0.1",
-    "bufferutil": "^4.0.6",
-    "discord.js": "^14.2.0",
-    "dotenv": "^16.0.1",
-    "erlpack": "github:discord/erlpack",
-    "fs": "*",
-    "i18next": "*",
-    "moment": "^2.29.4",
-    "moment-timezone": "^0.5.37",
-    "mongodb": "*",
-    "node-fetch": "*",
-    "node-fetch-npm": "^2.0.4",
-    "nodemon": "^2.0.19",
-    "utf-8-validate": "^5.0.9",
-    "zlib-sync": "^0.1.7"
+  "engines": {
+    "node": "16.x"
   }
 }
