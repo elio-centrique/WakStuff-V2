@@ -35,7 +35,8 @@ const commands = [
                 .setNameLocalization('fr', 'équipement')
                 .setDescriptionLocalization('fr', 'l\'équipement recherché')
                 .setDescription('The chosen gear')
-                .setRequired(true)),
+                .setRequired(true)
+                .setAutocomplete(true)),
 
     new SlashCommandBuilder()
         .setName('compare')
@@ -49,14 +50,16 @@ const commands = [
                 .setNameLocalization('fr', 'équipement_1')
                 .setDescriptionLocalization('fr', 'l\'équipement recherché N°1')
                 .setDescription('The first chosen gear')
-                .setRequired(true))
+                .setRequired(true)
+                .setAutocomplete(true))
         .addStringOption(option =>
             option
                 .setName('gear_2')
                 .setNameLocalization('fr', 'équipement_2')
                 .setDescriptionLocalization('fr', 'l\'équipement recherché N°2')
                 .setDescription('The second chosen gear')
-                .setRequired(true)),
+                .setRequired(true)
+                .setAutocomplete(true)),
 
     new SlashCommandBuilder()
         .setName('help')

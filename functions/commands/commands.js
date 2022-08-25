@@ -1,12 +1,48 @@
 const i18next = require('i18next');
-const {EmbedBuilder, SelectMenuBuilder, ModalBuilder , ActionRowBuilder} = require("discord.js");
+const {EmbedBuilder, SelectMenuBuilder, InteractionType , ActionRowBuilder} = require("discord.js");
 const {Option} = require("./assets/Classes/Option");
+
+let list_found1 = [];
+let list_found2 = [];
+let item1 = null;
+let item2 = null;
 
 //#region commandes
 client.on('interactionCreate', async interaction => {
-    if (!interaction.isCommand() && !interaction.isSelectMenu()) return;
+    if (!interaction.isCommand() && !interaction.isSelectMenu() && !interaction.isAutocomplete()) return;
     let lang = await get_language(interaction, mongo_collection);
-    await interaction.deferReply();
+    if(interaction.isCommand() || interaction.isSelectMenu()) {
+        await interaction.deferReply();
+    }
+
+    if(interaction.type === 4){
+        const focusedOption = interaction.options.getFocused(true);
+        let choices = list_items;
+        let filtered;
+        let final;
+        if(lang === 'fr') {
+            filtered = choices.filter(choice => choice.name_fr.toLowerCase().includes(focusedOption.value.toLowerCase()))
+            final = [...new Map(filtered.map((choice) => [choice.name_fr, choice])).values()];
+        } else {
+            filtered = choices.filter(choice => choice.name_en.toLowerCase().includes(focusedOption.value.toLowerCase()))
+            final = [...new Map(filtered.map((choice) => [choice.name_en, choice])).values()];
+        }
+
+
+        if(final.length > 25) {
+            final = filtered.slice(0, 25);
+        }
+
+        if(lang === 'fr') {
+            await interaction.respond(
+                final.map(choice => ({name: choice.name_fr, value: choice.name_fr}))
+            )
+        } else {
+            await interaction.respond(
+                final.map(choice => ({name: choice.name_en, value: choice.name_en}))
+            )
+        }
+    }
 
     if(interaction.isCommand()){
         const { commandName } = interaction;
@@ -27,7 +63,7 @@ client.on('interactionCreate', async interaction => {
             await get_language(interaction, mongo_collection)
             if (interaction.options._hoistedOptions.length > 0) {
                 return interaction.editReply(i18next.t('noargument'));
-            } if(interaction.author.id === "109752351643955200") {
+            } if(interaction.member.id === "109752351643955200") {
                 client.guilds.cache.forEach(guild => {
                     count++;
                 });
@@ -53,7 +89,6 @@ client.on('interactionCreate', async interaction => {
             if (interaction.options._hoistedOptions.length === 1) {
                 let find_object = false;
                 let list_found = [];
-
                 list_items.forEach(item => {
                     if(item.name_fr && item.name_fr.toLowerCase().includes(interaction.options.getString('gear').toLowerCase())) {
                         find_object = true;
@@ -122,8 +157,10 @@ client.on('interactionCreate', async interaction => {
         if (commandName === 'compare') {
             let find_object1 = false
             let find_object2 = false
-            let list_found1 = [];
-            let list_found2 = [];
+            list_found1 = [];
+            list_found2 = [];
+            item1 = null;
+            item2 = null;
             if (interaction.options._hoistedOptions.length < 2) {
                 return interaction.editReply(i18next.t('notenougharguments'));
             } else if (interaction.options._hoistedOptions.length > 2) {
@@ -147,6 +184,12 @@ client.on('interactionCreate', async interaction => {
                         list_found2.push(item);
                     }
                 })
+                if(!find_object1) {
+                    return interaction.deferReply(interaction.options.getString('gear_1') + ' ' + i18next.t('noObject'));
+                }
+                if(!find_object2){
+                    return interaction.deferReply(interaction.options.getString('gear_2') + ' ' + i18next.t('noObject'));
+                }
                 let options1 = []
                 let i = 0;
                 list_found1.forEach(item_found => {
@@ -179,63 +222,42 @@ client.on('interactionCreate', async interaction => {
                     .setDescription(i18next.t("help_precisions"))
                     .setColor("#FFFFFF")
                     .addFields({
-                        name: "language ",
-                        value: "**" + i18next.t("help_configure") + "\n**" + prefix + i18next.t("help_language") + "\n**" + prefix + i18next.t("help_prefix")
+                        name: i18next.t("language") ,
+                        value: "**" + i18next.t("help_language")
                     })
                     .addFields({
-                        name: "Objects ",
-                        value: "**" + i18next.t("help_search") + "\n**" + prefix + i18next.t("help_compare")
+                        name: i18next.t("object"),
+                        value: "**" + i18next.t("help_search") + "\n**" + i18next.t("help_compare")
                     })
                     .addFields({
-                        name: "Help ",
+                        name: i18next.t("help"),
                         value: "**" + i18next.t("help_help")
                     })
                     .addFields({
                         name: "Almanax ",
-                        value: "**" +prefix + i18next.t("help_almanax")})
+                        value: "**" + i18next.t("help_almanax")})
                 interaction.editReply({embeds: [embed_message]});
             } else {
                 interaction.editReply(i18next.t("toomucharguments"))
             }
         }
-        /*
-           if(commandName === "almanax") {
-               if(interaction.options._hoistedOptions.length === 0) {
-                   fetch('http://almanax.kasswat.com', {method: 'get'}).then(res => res.json()).then((json) => {
-                       let embed  = null;
-                       if(lang === "fr") {
-                           embed = new EmbedBuilder().setTitle(json['day'] + " " + json['month'] + " 977")
-                               .setDescription(json['description'][0])
-                               .addField('bonus', json['bonus'][0])
-                               .setImage('https://vertylo.github.io/wakassets/merydes/' + json['img'] + '.png')
-                       } else {
-                           embed = new EmbedBuilder().setTitle(json['day'] + " " + json['month'] + " 977")
-                               .setDescription(json['description'][1])
-                               .addField('bonus', json['bonus'][1])
-                               .setImage('https://vertylo.github.io/wakassets/merydes/' + json['img'] + '.png')
-                       }
-                       interaction.editReply(embed);
-                   });
-               } else {
-                   interaction.editReply(i18next.t("toomucharguments"))
-               }
-           } */
+
+       if(commandName === "almanax") {
+           if(interaction.options._hoistedOptions.length === 0) {
+               send_message(lang, interaction);
+           } else {
+               interaction.editReply(i18next.t("toomucharguments"))
+           }
+       }
     }
 
 
     if(interaction.isSelectMenu()){
-        let find_object = false
-        let find_object1 = false
-        let find_object2 = false
-        let list_found = []
-        let list_found1 = [];
-        let list_found2 = [];
-        let item_selected = null;
-        let item1 = null
-        let item2 = null
-        console.log(interaction.values)
         if(interaction.customId === 'search') {
+            let find_object = false
+            let item_selected = null;
             try {
+                console.log(interaction.values);
                 list_items.forEach(item => {
                     if(item.id === parseInt(interaction.values)){
                         item_selected = item;
@@ -269,11 +291,10 @@ client.on('interactionCreate', async interaction => {
                         embeds: [embed_item.toJSON()]
                     });
                 }
-                //interaction.deleteReply()
             }
             catch(e) {
                 interaction.member.createDM().then(dm => {
-                    dm.send("can't send message in #" + interaction.channel.name + ". Please check my permission in this channel.");
+                    dm.send("can't send message in <#" + interaction.channel.id + ">. Please check my permission in this channel. \n" + e.toString());
                 });
             }
         }
@@ -281,7 +302,6 @@ client.on('interactionCreate', async interaction => {
             list_items.forEach(item => {
                 if(item.id === parseInt(interaction.values)){
                     item1 = item;
-                    find_object1 = true
                 }
             })
             let options2 = []
@@ -310,10 +330,9 @@ client.on('interactionCreate', async interaction => {
             list_items.forEach(item => {
                 if(item.id === parseInt(interaction.values)){
                     item2 = item;
-                    find_object2 = true
                 }
             })
-            if (find_object1 && find_object2) {
+            if (item1 && item2) {
                 let tabStats1 = []
                 let tabStats2 = []
                 item1.stats_fr.forEach(stat1 => {
@@ -354,6 +373,7 @@ client.on('interactionCreate', async interaction => {
                         tabStats2.push([stat1[0], stat1[1], stat1[2]])
                     }
                 })
+                console.log(tabStats1, tabStats2)
                 let k = 0
                 let l = 0
                 let tmpMessage1 = ""
@@ -401,6 +421,7 @@ client.on('interactionCreate', async interaction => {
                         l++
                     });
                 }
+                console.log(tmpMessage1, tmpMessage2)
                 let item_one_name;
                 let item_two_name;
                 if (lang === "fr") {
@@ -425,7 +446,7 @@ client.on('interactionCreate', async interaction => {
                             inline: true
                         },
                     );
-                interaction.channel.send({embeds: [embed_message.toJSON()]});
+                interaction.editReply({embeds: [embed_message.toJSON()]});
             }
         }
     }

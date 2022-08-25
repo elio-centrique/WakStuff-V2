@@ -6,7 +6,8 @@ const i18next = require('i18next');
 const {Discord, EmbedBuilder , Client, GatewayIntentBits , Interaction, MessageSelectMenu, MessageActionRow} = require('discord.js');
 const MongoClient = require('mongodb').MongoClient;
 const fs = require("fs");
-const fetch = require("node-fetch");
+const moment = require("moment-timezone");
+const fetch = require('node-fetch-npm');
 const {Option} = require("./assets/Classes/Option");
 //#endregion
 

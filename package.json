@@ -29,8 +29,11 @@
     "erlpack": "github:discord/erlpack",
     "fs": "*",
     "i18next": "*",
+    "moment": "^2.29.4",
+    "moment-timezone": "^0.5.37",
     "mongodb": "*",
     "node-fetch": "*",
+    "node-fetch-npm": "^2.0.4",
     "nodemon": "^2.0.19",
     "utf-8-validate": "^5.0.9",
     "zlib-sync": "^0.1.7"
