@@ -1,5 +1,6 @@
 class Item {
-    constructor(name_fr, name_en, rarity, color, level, description_fr, description_en, stats_fr, stats_en, image) {
+    constructor(id, name_fr, name_en, rarity, color, level, description_fr, description_en, stats_fr, stats_en, image) {
+        this.id = id;
         this.name_fr = name_fr;
         this.name_en = name_en;
         this.rarity = rarity;
@@ -28,6 +29,12 @@ class Item {
             }
         }
         return message;
+    }
+
+    static create_id(){
+        if(!this.latestId) this.latestId = 1
+        else this.latestId++;
+        return this.latestId;
     }
 }
 

@@ -1,561 +1,453 @@
 const i18next = require('i18next');
-const Discord = require("discord.js");
+const {EmbedBuilder, SelectMenuBuilder, InteractionType , ActionRowBuilder} = require("discord.js");
+const {Option} = require("./assets/Classes/Option");
 
+let list_found1 = [];
+let list_found2 = [];
+let item1 = null;
+let item2 = null;
 
 //#region commandes
-client.on('message', async message => {
-    let prefix = await get_prefix(message, mongo_collection);
-    if (!message.content.startsWith(prefix)) return;
-    const args = message.content.slice(prefix.length).split(' ');
-    const command = args.shift().toLowerCase();
-    let lang = await get_language(message, mongo_collection);
+client.on('interactionCreate', async interaction => {
+    if (!interaction.isCommand() && !interaction.isSelectMenu() && !interaction.isAutocomplete()) return;
+    let lang = await get_language(interaction, mongo_collection);
+    if(interaction.isCommand() || interaction.isSelectMenu()) {
+        await interaction.deferReply();
+    }
 
-    if (command === 'prefix') {
-        if (args.length === 0) {
-            message.channel.send(i18next.t('getprefix') + prefix);
-        } else if (args.length === 1) {
-            await set_prefix(message, args[0], mongo_collection)
+    if(interaction.type === 4){
+        const focusedOption = interaction.options.getFocused(true);
+        let choices = list_items;
+        let filtered;
+        let final;
+        if(lang === 'fr') {
+            filtered = choices.filter(choice => choice.name_fr.toLowerCase().includes(focusedOption.value.toLowerCase()))
+            final = [...new Map(filtered.map((choice) => [choice.name_fr, choice])).values()];
         } else {
-            message.channel.send(i18next.t('toomucharguments'));
+            filtered = choices.filter(choice => choice.name_en.toLowerCase().includes(focusedOption.value.toLowerCase()))
+            final = [...new Map(filtered.map((choice) => [choice.name_en, choice])).values()];
+        }
+
+
+        if(final.length > 25) {
+            final = filtered.slice(0, 25);
+        }
+
+        if(lang === 'fr') {
+            await interaction.respond(
+                final.map(choice => ({name: choice.name_fr, value: choice.name_fr}))
+            )
+        } else {
+            await interaction.respond(
+                final.map(choice => ({name: choice.name_en, value: choice.name_en}))
+            )
         }
     }
 
-    if (command === 'language') {
-        if (args.length === 0) {
-            return message.channel.send(i18next.t('getlanguage') + lang);
-        } else if (args.length === 1) {
-            await set_language(message, mongo_collection, args[0])
-        } else {
-            return message.channel.send(i18next.t('toomucharguments'));
-        }
-    }
+    if(interaction.isCommand()){
+        const { commandName } = interaction;
+        //await setLanguage(interaction)
 
-    if (command === 'configure') {
-         if (args.length < 2) {
-            return message.channel.send(i18next.t('notenougharguments'));
-        } else if (args.length === 2) {
-            await set_language(message, mongo_collection, args[0])
-            await set_prefix(message, args[1], mongo_collection);
-        } else {
-            return message.channel.send(i18next.t('toomucharguments'));
-        }
-    }
-
-    if (command === 'stats') {
-        let count = 0;
-        await get_language(message, mongo_collection)
-        if (args.length > 0) {
-            return message.channel.send(i18next.t('noargument'));
-        } if(message.author.id === "109752351643955200") {
-            client.guilds.cache.forEach(guild => {
-                count++;
-            });
-            if(lang === "fr") {
-                message.channel.send('Il y a ' + count + ' serveurs qui m\'utilisent... Incroyable');
+        if (commandName === 'language') {
+            if (interaction.options._hoistedOptions.length === 0) {
+                return interaction.editReply(i18next.t('getlanguage') + lang);
+            } else if (interaction.options._hoistedOptions.length === 1) {
+                await set_language(interaction, mongo_collection, interaction.options.getString('language'))
             } else {
-                message.channel.send('there is ' + count + ' servers using myself... Incredible');
+                return interaction.editReply(i18next.t('toomucharguments'));
             }
-        } else {
-            console.log(message.author.username + " from " + message.guild.name + " tries to gets my stats.")
-            message.channel.send(i18next.t('noauthorized'))
         }
 
+        if (commandName === 'stats') {
+            let count = 0;
+            await get_language(interaction, mongo_collection)
+            if (interaction.options._hoistedOptions.length > 0) {
+                return interaction.editReply(i18next.t('noargument'));
+            } if(interaction.member.id === "109752351643955200") {
+                client.guilds.cache.forEach(guild => {
+                    count++;
+                });
+                if(lang === "fr") {
+                    interaction.editReply('Il y a ' + count + ' serveurs qui m\'utilisent... Incroyable');
+                } else {
+                    interaction.editReply('there is ' + count + ' servers using myself... Incredible');
+                }
+            } else {
+                console.log(interaction.author.username + " from " + interaction.guild.name + " tries to gets my stats.")
+                interaction.editReply(i18next.t('noauthorized'))
+            }
+
+        }
+
+        if (commandName === 'search') {
+            if (interaction.options._hoistedOptions.length < 1) {
+                return interaction.editReply(i18next.t('notenougharguments'));
+            }
+            if (interaction.options._hoistedOptions.length > 1) {
+                return interaction.editReply(i18next.t('toomucharguments'));
+            }
+            if (interaction.options._hoistedOptions.length === 1) {
+                let find_object = false;
+                let list_found = [];
+                list_items.forEach(item => {
+                    if(item.name_fr && item.name_fr.toLowerCase().includes(interaction.options.getString('gear').toLowerCase())) {
+                        find_object = true;
+                        list_found.push(item);
+                    } else if(item.name_en && item.name_en.toLowerCase().includes(interaction.options.getString('gear').toLowerCase())) {
+                        find_object = true;
+                        list_found.push(item);
+                    }
+                })
+                if(!find_object) {
+                    interaction.editReply(interaction.options.getString('gear') + i18next.t("noObject"));
+                } else {
+                    if (list_found.length === 1) {
+                        if (lang === 'fr') {
+                            let embed = new EmbedBuilder().setTitle(list_found[0].name_fr)
+                                .setDescription(list_found[0].get_message_stats(lang))
+                                .setColor(list_found[0].color)
+                                .addFields({
+                                    name: "Description: ",
+                                    value: list_found[0].description_fr
+                                })
+                                .setImage(list_found[0].image)
+                            interaction.editReply({embeds:[embed]});
+                        } else {
+                            let embed = new EmbedBuilder().setTitle(list_found[0].name_en)
+                                .setDescription(list_found[0].get_message_stats(lang))
+                                .setColor(list_found[0].color)
+                                .addFields({
+                                    name: "Description: ",
+                                    value:list_found[0].description_en
+                                })
+                                .setImage(list_found[0].image)
+                            interaction.editReply({embeds:[embed]});
+                        }
+                    } else {
+                        if (list_found.length > 25) {
+                            interaction.editReply(i18next.t("toomanyobjects"));
+                        } else {
+                            let options = [];
+                            let i = 0;
+                            list_found.forEach(item_found => {
+                                let option
+                                if (lang === "fr") {
+                                    option = new Option(item_found.name_fr, item_found.id.toString(), i18next.t("level") + " " + item_found.level.toString() + " " + i18next.t(item_found.rarity.toString()), null, false);
+                                } else {
+                                    option = new Option(item_found.name_en, item_found.id.toString(), i18next.t("level") + " " + item_found.level.toString() + " " + i18next.t(item_found.rarity.toString()), null, false);
+                                }
+                                options.push({label: option.label, description: option.description, value: option.value}) ;
+                                i++;
+                            });
+                            let selectMessage = new SelectMenuBuilder()
+                                .setPlaceholder(i18next.t("chooseNumber"))
+                                .setOptions(options)
+                                .setCustomId("search")
+                            const row = new ActionRowBuilder().addComponents(selectMessage);
+                            interaction.editReply({
+                                content: selectMessage.placeholder,
+                                components: [row]
+                            });
+                        }
+                    }
+                }
+            }
+        }
+
+        if (commandName === 'compare') {
+            let find_object1 = false
+            let find_object2 = false
+            list_found1 = [];
+            list_found2 = [];
+            item1 = null;
+            item2 = null;
+            if (interaction.options._hoistedOptions.length < 2) {
+                return interaction.editReply(i18next.t('notenougharguments'));
+            } else if (interaction.options._hoistedOptions.length > 2) {
+                return interaction.editReply(i18next.t('toomucharguments'));
+            }
+            else {
+                list_items.forEach(item => {
+                    if(item.name_fr && item.name_fr.toLowerCase().includes(interaction.options.getString('gear_1').toLowerCase())) {
+                        find_object1 = true;
+                        list_found1.push(item);
+                    } else if(item.name_en && item.name_en.toLowerCase().includes(interaction.options.getString('gear_1').toLowerCase())) {
+                        find_object1 = true;
+                        list_found1.push(item);
+                    }
+
+                    if(item.name_fr && item.name_fr.toLowerCase().includes(interaction.options.getString('gear_2').toLowerCase())) {
+                        find_object2 = true;
+                        list_found2.push(item);
+                    } else if(item.name_en && item.name_en.toLowerCase().includes(interaction.options.getString('gear_2').toLowerCase())) {
+                        find_object2 = true;
+                        list_found2.push(item);
+                    }
+                })
+                if(!find_object1) {
+                    return interaction.deferReply(interaction.options.getString('gear_1') + ' ' + i18next.t('noObject'));
+                }
+                if(!find_object2){
+                    return interaction.deferReply(interaction.options.getString('gear_2') + ' ' + i18next.t('noObject'));
+                }
+                let options1 = []
+                let i = 0;
+                list_found1.forEach(item_found => {
+                    let option1
+                    if (lang === "fr") {
+                        option1 = new Option(item_found.name_fr, item_found.id.toString(), i18next.t("level") + " " + item_found.level.toString() + " " + i18next.t(item_found.rarity.toString()), null, false);
+                    } else {
+                        option1 = new Option(item_found.name_en, item_found.id.toString(), i18next.t("level") + " " + item_found.level.toString() + " " + i18next.t(item_found.rarity.toString()), null, false);
+                    }
+                    options1.push({label: option1.label, description: option1.description, value: option1.value});
+                    i++;
+                });
+                let selectMessage1 = new SelectMenuBuilder()
+                    .setPlaceholder(i18next.t("chooseNumber"))
+                    .setOptions(options1)
+                    .setCustomId("search1")
+                const row1 = new ActionRowBuilder().addComponents(selectMessage1);
+                interaction.editReply({
+                    content: selectMessage1.placeholder,
+                    components: [row1]
+                });
+
+            }
+        }
+
+        if(commandName === "help") {
+            if(interaction.options._hoistedOptions.length === 0) {
+                let embed_message = new EmbedBuilder()
+                    .setTitle(i18next.t("help"))
+                    .setDescription(i18next.t("help_precisions"))
+                    .setColor("#FFFFFF")
+                    .addFields({
+                        name: i18next.t("language") ,
+                        value: "**" + i18next.t("help_language")
+                    })
+                    .addFields({
+                        name: i18next.t("object"),
+                        value: "**" + i18next.t("help_search") + "\n**" + i18next.t("help_compare")
+                    })
+                    .addFields({
+                        name: i18next.t("help"),
+                        value: "**" + i18next.t("help_help")
+                    })
+                    .addFields({
+                        name: "Almanax ",
+                        value: "**" + i18next.t("help_almanax")})
+                interaction.editReply({embeds: [embed_message]});
+            } else {
+                interaction.editReply(i18next.t("toomucharguments"))
+            }
+        }
+
+       if(commandName === "almanax") {
+           if(interaction.options._hoistedOptions.length === 0) {
+               send_message(lang, interaction);
+           } else {
+               interaction.editReply(i18next.t("toomucharguments"))
+           }
+       }
     }
 
-    if (command === 'search') {
-        if (args.length < 1) {
-            return message.channel.send(i18next.t('notenougharguments'));
-        } else if (args.length >= 1) {
-            let find_object = false;
-            let list_found = [];
 
+    if(interaction.isSelectMenu()){
+        if(interaction.customId === 'search') {
+            let find_object = false
+            let item_selected = null;
+            try {
+                console.log(interaction.values);
+                list_items.forEach(item => {
+                    if(item.id === parseInt(interaction.values)){
+                        item_selected = item;
+                        find_object = true
+                    }
+                })
+                if (lang === "fr") {
+                    let embed_item = new EmbedBuilder()
+                        .setTitle(item_selected.name_fr + " "  + i18next.t("level") + " " + item_selected.level)
+                        .setDescription(item_selected.get_message_stats(lang))
+                        .setColor(item_selected.color)
+                        .addFields({
+                            name: "Description: ",
+                            value: item_selected.description_fr
+                        })
+                        .setImage(item_selected.image)
+                    interaction.editReply({
+                        embeds: [embed_item.toJSON()]
+                    });
+                } else {
+                    let embed_item = new EmbedBuilder()
+                        .setTitle(item_selected.name_en + " " + i18next.t("level") + " " + item_selected.level)
+                        .setDescription(item_selected.get_message_stats(lang))
+                        .setColor(item_selected.color)
+                        .addFields({
+                            name: "Description: ",
+                            value: item_selected.description_en
+                        })
+                        .setImage(item_selected.image)
+                    interaction.editReply({
+                        embeds: [embed_item.toJSON()]
+                    });
+                }
+            }
+            catch(e) {
+                interaction.member.createDM().then(dm => {
+                    dm.send("can't send message in <#" + interaction.channel.id + ">. Please check my permission in this channel. \n" + e.toString());
+                });
+            }
+        }
+        if(interaction.customId === "search1") {
             list_items.forEach(item => {
-                if(item.name_fr && item.name_fr.toLowerCase().includes(args.join(" ").toLowerCase())) {
-                    find_object = true;
-                    list_found.push(item);
-                } else if(item.name_en && item.name_en.toLowerCase().includes(args.join(" ").toLowerCase())) {
-                    find_object = true;
-                    list_found.push(item);
+                if(item.id === parseInt(interaction.values)){
+                    item1 = item;
                 }
             })
-
-            if(!find_object) {
-                message.channel.send(args.join(' ') + i18next.t("noObject"));
-            } else {
-                if (list_found.length === 1) {
-                    try {
-                        if (lang === 'fr') {
-                            let embed = new Discord.MessageEmbed().setTitle(list_found[0].name_fr + " "  + i18next.t("level") + " " + list_found[0].level)
-                                .setDescription(list_found[0].get_message_stats(lang))
-                                .setColor(list_found[0].color)
-                                .addField("Description: ", list_found[0].description_fr)
-                                .setImage(list_found[0].image)
-                            message.channel.send({embeds: [embed.toJSON()]});
-                        } else {
-                            let embed = new Discord.MessageEmbed().setTitle(list_found[0].name_en + " "  + i18next.t("level") + " " + list_found[0].level)
-                                .setDescription(list_found[0].get_message_stats(lang))
-                                .setColor(list_found[0].color)
-                                .addField("Description: ", list_found[0].description_en)
-                                .setImage(list_found[0].image)
-                            message.channel.send({embeds: [embed.toJSON()]});
-                        }
-                    } catch(e) {
-                        message.member.createDM().then(dm => {
-                            dm.send("can't send message in #" + message.channel.name + ". Please check my permission in this channel.");
-                        });
-                    }
+            let options2 = []
+            let j = 0;
+            list_found2.forEach(item_found => {
+                let option2
+                if (lang === "fr") {
+                    option2 = new Option(item_found.name_fr, item_found.id.toString(), i18next.t("level") + " " + item_found.level.toString() + " " + i18next.t(item_found.rarity.toString()), null, false);
                 } else {
-                    if (list_found.length > 25) {
-                        message.channel.send(i18next.t("toomanyobjects"));
-                    } else {
-                        let options = []
-                        let i = 0;
-                        list_found.forEach(item_found => {
-                            let option
-                            if (lang === "fr") {
-                                option = new Option.Option(item_found.name_fr, i.toString(), i18next.t("level") + " " + item_found.level.toString() + " " + i18next.t(item_found.rarity.toString()), null, false);
-                            } else {
-                                option = new Option.Option(item_found.name_en, i.toString(), i18next.t("level") + " " + item_found.level.toString() + " " + i18next.t(item_found.rarity.toString()), null, false);
-                            }
-                            options.push(option);
-                            i++;
-                        });
-                        let selectMessage = new Discord.MessageSelectMenu();
-                        selectMessage.setPlaceholder(i18next.t("chooseNumber"))
-                            .addOptions(options)
-                            .setCustomId("search");
-
-                        /*let embed = new Discord.MessageEmbed()
-                            .setTitle(i18next.t("chooseNumber"))
-                            .setDescription(description);
-                        */
-                        const filter = (interaction) => interaction.customId === selectMessage.customId;
-                        const collector = message.channel.createMessageComponentCollector({ filter, time: 120000 });
-                        message.channel.send({
-                            content: selectMessage.placeholder,
-                            components: [{
-                                "type": "ACTION_ROW",
-                                components: [{
-                                    "type": "SELECT_MENU",
-                                    "customId": selectMessage.customId,
-                                    "options": selectMessage.options,
-                                }]
-                            }],
-                            ephemeral: true,
-                        });
-                        collector.on('collect', collected => {
-                            message.channel.lastMessage.delete();
-                            try {
-                                if (lang === "fr") {
-                                    let embed_item = new Discord.MessageEmbed()
-                                        .setTitle(list_found[parseInt(collected.values[0])].name_fr + " "  + i18next.t("level") + " " + list_found[parseInt(collected.values[0])].level)
-                                        .setDescription(list_found[parseInt(collected.values[0])].get_message_stats(lang))
-                                        .setColor(list_found[parseInt(collected.values[0])].color)
-                                        .addField("Description: ", list_found[parseInt(collected.values[0])].description_fr)
-                                        .setImage(list_found[parseInt(collected.values[0])].image)
-                                    message.channel.send({
-                                        embeds: [embed_item.toJSON()]
-                                    });
-                                    collector.stop("finish")
-                                } else {
-                                    let embed_item = new Discord.MessageEmbed()
-                                        .setTitle(list_found[parseInt(collected.values[0])].name_en + " " + i18next.t("level") + " " + list_found[parseInt(collected.values[0])].level)
-                                        .setDescription(list_found[parseInt(collected.values[0])].get_message_stats(lang))
-                                        .setColor(list_found[parseInt(collected.values[0])].color)
-                                        .addField("Description: ", list_found[parseInt(collected.values[0])].description_en)
-                                        .setImage(list_found[parseInt(collected.values[0])].image)
-                                    message.channel.send({
-                                        embeds: [embed_item.toJSON()]
-                                    });
-                                    collector.stop("finish")
-                                }
-                            } catch(e) {
-                                message.member.createDM().then(dm => {
-                                    dm.send("can't send message in #" + message.channel.name + ". Please check my permission in this channel.");
-                                });
-                            }
-                        });
-                        collector.on('end', (collected, reason) => {
-                            if(reason === "time"){
-                                message.channel.send(i18next.t("timesup"))
-                            }
-                        });
-                    }
+                    option2 = new Option(item_found.name_en, item_found.id.toString(), i18next.t("level") + " " + item_found.level.toString() + " " + i18next.t(item_found.rarity.toString()), null, false);
                 }
-            }
+                options2.push({label: option2.label, description: option2.description, value: option2.value});
+                j++;
+            });
+            let selectMessage2 = new SelectMenuBuilder()
+                .setPlaceholder(i18next.t("chooseNumber"))
+                .setOptions(options2)
+                .setCustomId("search2")
+            const row2 = new ActionRowBuilder().addComponents(selectMessage2);
+            interaction.channel.send({
+                content: selectMessage2.placeholder,
+                components: [row2]
+            });
         }
-    }
-
-    /*
-    if (command === 'compare') {
-        let find_object1 = false
-        let find_object2 = false
-        let item1 = null
-        let item2 = null
-        let answer_name = []
-
-        if (args.length > 1) {
-            return message.channel.send(i18next.t('toomanyarguments'));
-        } else {
+        if(interaction.customId === 'search2') {
             list_items.forEach(item => {
-                answer_name.push(item.name_fr.toLowerCase());
-                answer_name.push(item.name_en.toLowerCase());
-            });
-            const filter_item1 = m => {
-                return answer_name.includes(m.content);
-            };
-            message.channel.send(i18next.t('choose_first_item')).then(() => {
-                message.channel.awaitMessages(filter_item1, {max: 1, time: 30000, errors: ['time']})
-                .then(collected => {
-                    let list_found = [];
-                    list_items.forEach(item => {
-                        if(item.name_fr && item.name_fr.toString().toLowerCase().includes(collected.first().content.toLowerCase())) {
-                            find_object1 = true;
-                            list_found.push(item);
-                        } else if(item.name_en && item.name_en.toString().toLowerCase().includes(collected.first().content.toLowerCase())) {
-                            find_object1 = true;
-                            list_found.push(item);
-                        }
-                    })
-                    let options1 = []
-                    let i = 1;
-                    let answers_list1 = []
-                    list_found.forEach(item_found => {
-                        if (lang === "fr") {
-                                option = new Option.Option(item_found.name_fr, i.toString(), i18next.t("level") + " " + item_found.level.toString() + " " + i18next.t(item_found.rarity.toString()), null, false);
+                if(item.id === parseInt(interaction.values)){
+                    item2 = item;
+                }
+            })
+            if (item1 && item2) {
+                let tabStats1 = []
+                let tabStats2 = []
+                item1.stats_fr.forEach(stat1 => {
+                    let id_found = false;
+                    if (debuff_ids.includes(stat1[0])) {
+                        stat1[1] = stat1[1] * -1
+                    }
+                    item2.stats_fr.forEach(stat2 => {
+                        if (stat1[0] === stat2[0]) {
+                            id_found = true;
+                            if (stat1[2] === stat2[2]) {
+                                tabStats1.push([stat1[0], stat1[1] - stat2[1], 0])
                             } else {
-                                option = new Option.Option(item_found.name_en, i.toString(), i18next.t("level") + " " + item_found.level.toString() + " " + i18next.t(item_found.rarity.toString()), null, false);
+                                tabStats1.push([stat1[0], stat1[1] - stat2[1], stat1[2] - stat2[2]])
                             }
-                        answers_list1.push(option);
-                        i++;
+                        }
                     })
-                    let selectMessage = new Discord.MessageSelectMenu();
-                        selectMessage.setPlaceholder(i18next.t("chooseNumber"))
-                            .addOptions(answer_list1)
-                            .setCustomId("search1");
-
-                        /*let embed = new Discord.MessageEmbed()
-                            .setTitle(i18next.t("chooseNumber"))
-                            .setDescription(description);
-                        */ /*
-                    const filter_1 = (interaction) => interaction.customId === selectMessage.customId;
-                    const collector_1 = message.channel.createMessageComponentCollector({ filter_1, time: 120000 });
-                    collector_1.channel.send({
-                        content: selectMessage.placeholder,
-                        components: [{
-                            "type": "ACTION_ROW",
-                            components: [{
-                                "type": "SELECT_MENU",
-                                "customId": selectMessage.customId,
-                                "options": selectMessage.options,
-                            }]
-                        }],
-                        ephemeral: false,
-                    });
-                    collector_1.on('collect', collected => {
-                        item1 = list_found[parseInt(collected.values[0])];
-                        //collector.channel.lastMessage.delete();
-                        if (lang === "fr") {
-                            /*let embed_item = new Discord.MessageEmbed()
-                                .setTitle(list_found[parseInt(collected.values[0])].name_fr + " "  + i18next.t("level") + " " + list_found[parseInt(collected.values[0])].level)
-                                .setDescription(list_found[parseInt(collected.values[0])].get_message_stats(lang))
-                                .setColor(list_found[parseInt(collected.values[0])].color)
-                                .addField("Description: ", list_found[parseInt(collected.values[0])].description_fr)
-                                .setImage(list_found[parseInt(collected.values[0])].image)
-                            message.channel.send({
-                                embeds: [embed_item.toJSON()]
-                            });
-                            */ /*
-                            //collector.stop("finish")
-                        } else {
-                            /*
-                            let embed_item = new Discord.MessageEmbed()
-                                .setTitle(list_found[parseInt(collected.values[0])].name_en + " " + i18next.t("level") + " " + list_found[parseInt(collected.values[0])].level)
-                                .setDescription(list_found[parseInt(collected.values[0])].get_message_stats(lang))
-                                .setColor(list_found[parseInt(collected.values[0])].color)
-                                .addField("Description: ", list_found[parseInt(collected.values[0])].description_en)
-                                .setImage(list_found[parseInt(collected.values[0])].image)
-                            message.channel.send({
-                                embeds: [embed_item.toJSON()]
-                            });
-                            */ /*
-                            //collector.stop("finish")
-                        }
-                        collector_1.stop("finish")
-                    });
-                    collector_1.on('end', (collected, reason) => {
-                        if(reason === "time"){
-                            message.channel.send(i18next.t("timesup"))
-                        }
-                    });
-                    
-                    const filter_item2 = m => {
-                        return answer_name.includes(m.content);
-                    };
-                    message.channel.send(i18next.t('choose_second_item')).then(() => {
-                        message.channel.awaitMessages(filter_item2, {max: 1, time: 30000, errors: ['time']})
-                        .then(collected => {
-                            let list_found = [];
-                            list_items.forEach(item => {
-                                if(item.name_fr && item.name_fr.toString().toLowerCase().includes(collected.first().content.toLowerCase())) {
-                                    find_object2 = true;
-                                    list_found.push(item);
-                                } else if(item.name_en && item.name_en.toString().toLowerCase().includes(collected.first().content.toLowerCase())) {
-                                    find_object2 = true;
-                                    list_found.push(item);
-                                }
-                            })
-                            let options2 = []
-                            let j = 1;
-                            let answers_list2 = []
-                            list_found.forEach(item_found => {
-                                if (lang === "fr") {
-                                        option = new Option.Option(item_found.name_fr, j.toString(), i18next.t("level") + " " + item_found.level.toString() + " " + i18next.t(item_found.rarity.toString()), null, false);
-                                    } else {
-                                        option = new Option.Option(item_found.name_en, j.toString(), i18next.t("level") + " " + item_found.level.toString() + " " + i18next.t(item_found.rarity.toString()), null, false);
-                                    }
-                                answers_list1.push(option);
-                                i++;
-                            })
-                            let selectMessage = new Discord.MessageSelectMenu();
-                                selectMessage.setPlaceholder(i18next.t("chooseNumber"))
-                                    .addOptions(answer_list2)
-                                    .setCustomId("search2");
-
-                                /*let embed = new Discord.MessageEmbed()
-                                    .setTitle(i18next.t("chooseNumber"))
-                                    .setDescription(description);
-                                */ /*
-                            const filter_2 = (interaction) => interaction.customId === selectMessage.customId;
-                            const collector_2 = message.channel.createMessageComponentCollector({ filter_2, time: 120000 });
-                            collector_2.channel.send({
-                                content: selectMessage.placeholder,
-                                components: [{
-                                    "type": "ACTION_ROW",
-                                    components: [{
-                                        "type": "SELECT_MENU",
-                                        "customId": selectMessage.customId,
-                                        "options": selectMessage.options,
-                                    }]
-                                }],
-                                ephemeral: false,
-                            });
-                            collector_2.on('collect', collected => {
-                                item2 = list_found[parseInt(collected.values[0])];
-                                //collector.channel.lastMessage.delete();
-                                if (lang === "fr") {
-                                    /*let embed_item = new Discord.MessageEmbed()
-                                        .setTitle(list_found[parseInt(collected.values[0])].name_fr + " "  + i18next.t("level") + " " + list_found[parseInt(collected.values[0])].level)
-                                        .setDescription(list_found[parseInt(collected.values[0])].get_message_stats(lang))
-                                        .setColor(list_found[parseInt(collected.values[0])].color)
-                                        .addField("Description: ", list_found[parseInt(collected.values[0])].description_fr)
-                                        .setImage(list_found[parseInt(collected.values[0])].image)
-                                    message.channel.send({
-                                        embeds: [embed_item.toJSON()]
-                                    });
-                                    */ /*
-                                    //collector.stop("finish")
-                                } else {
-                                    /*
-                                    let embed_item = new Discord.MessageEmbed()
-                                        .setTitle(list_found[parseInt(collected.values[0])].name_en + " " + i18next.t("level") + " " + list_found[parseInt(collected.values[0])].level)
-                                        .setDescription(list_found[parseInt(collected.values[0])].get_message_stats(lang))
-                                        .setColor(list_found[parseInt(collected.values[0])].color)
-                                        .addField("Description: ", list_found[parseInt(collected.values[0])].description_en)
-                                        .setImage(list_found[parseInt(collected.values[0])].image)
-                                    message.channel.send({
-                                        embeds: [embed_item.toJSON()]
-                                    });
-                                    */ /*
-                                    //collector.stop("finish")
-                                }
-                                collector_2.stop("finish")
-                            });
-                            collector_2.on('end', (collected, reason) => {
-                                if(reason === "time"){
-                                    message.channel.send(i18next.t("timesup"))
-                                }
-                            });
-                                   
-                            if (find_object1 && find_object2) {
-                                let tabStats1 = []
-                                let tabStats2 = []
-                                item1.stats_fr.forEach(stat1 => {
-                                    let id_found = false;
-                                    if (debuff_ids.includes(stat1[0])) {
-                                        stat1[1] = stat1[1] * -1
-                                    }
-                                    item2.stats_fr.forEach(stat2 => {
-                                        if (stat1[0] === stat2[0]) {
-                                            id_found = true;
-                                            if (stat1[2] === stat2[2]) {
-                                                tabStats1.push([stat1[0], stat1[1] - stat2[1], 0])
-                                            } else {
-                                                tabStats1.push([stat1[0], stat1[1] - stat2[1], stat1[2] - stat2[2]])
-                                            }
-                                        }
-                                    })
-                                    if (!id_found) {
-                                        tabStats1.push([stat1[0], stat1[1], stat1[2]])
-                                    }
-                                })
-                                item2.stats_fr.forEach(stat1 => {
-                                    let id_found = false
-                                    if (debuff_ids.includes(stat1[0])) {
-                                        stat1[1] = stat1[1] * -1
-                                    }
-                                    item1.stats_fr.forEach(stat2 => {
-                                        if (stat1[0] === stat2[0]) {
-                                            id_found = true
-                                            if (stat1[2] === stat2[2]) {
-                                                tabStats2.push([stat1[0], stat1[1] - stat2[1], 0])
-                                            } else {
-                                                tabStats2.push([stat1[0], stat1[1] - stat2[1], stat1[2] - stat2[2]])
-                                            }
-                                        }
-                                    })
-                                    if (!id_found) {
-                                        tabStats2.push([stat1[0], stat1[1], stat1[2]])
-                                    }
-                                })
-                                let k = 0
-                                let l = 0
-                                let tmpMessage1 = ""
-                                let tmpMessage2 = ""
-                                if(lang === "fr") {
-                                    item1.stats_fr.forEach(stat => {
-                                        let indicator = ""
-                                        if (tabStats1[k][1] >= 0) {
-                                            indicator = "+"
-                                        }
-                                        let stat_message = stat[4].toString();
-                                        stat_message += " (" + indicator.toString() + tabStats1[k][1].toString() + ")"
-                                        tmpMessage1 += stat_message + "\n"
-                                        k++
-                                    })
-                                    item2.stats_fr.forEach(stat => {
-                                        let indicator = ""
-                                        if (tabStats2[l][1] >= 0) {
-                                            indicator = "+"
-                                        }
-                                        let stat_message = stat[4].toString()
-                                        stat_message += " (" + indicator.toString() + tabStats2[l][1].toString() + ")"
-                                        tmpMessage2 += stat_message + "\n"
-                                        j++
-                                    });
-                                } else {
-                                    item1.stats_en.forEach(stat => {
-                                        let indicator = ""
-                                        if (tabStats1[k][1] >= 0) {
-                                            indicator = "+"
-                                        }
-                                        let stat_message = stat[4].toString();
-                                        stat_message += " (" + indicator.toString() + tabStats1[k][1].toString() + ")"
-                                        tmpMessage1 += stat_message + "\n"
-                                        k++
-                                    })
-                                    item2.stats_en.forEach(stat => {
-                                        let indicator = ""
-                                        if (tabStats2[l][1] >= 0) {
-                                            indicator = "+"
-                                        }
-                                        let stat_message = stat[4].toString()
-                                        stat_message += " (" + indicator.toString() + tabStats2[l][1].toString() + ")"
-                                        tmpMessage2 += stat_message + "\n"
-                                        l++
-                                    });
-                                }
-                                let item_one_name;
-                                let item_two_name;
-                                if (lang === "fr") {
-                                    item_one_name = item1.name_fr
-                                    item_two_name = item2.name_fr
-                                } else {
-                                    item_one_name = item1.name_en
-                                    item_two_name = item2.name_en
-                                }
-                                let embed_message = new Discord.MessageEmbed()
-                                    .setTitle(i18next.t("itemVS") + item_one_name + " " + i18next.t(item1.rarity) + " VS " + item_two_name + " " + i18next.t(item2.rarity))
-                                    .setColor("#000000")
-                                    .addField(item_one_name, tmpMessage1, true)
-                                    .addField(item_two_name, tmpMessage2, true);
-                                message.channel.send({embeds: [embed_message]});
-                            }
-                        })
-                    }).catch(collected => {
-                        message.channel.send(i18next.t("timesup"));
-                    });
+                    if (!id_found) {
+                        tabStats1.push([stat1[0], stat1[1], stat1[2]])
+                    }
                 })
-            }).catch(collected => {
-                message.channel.send(i18next.t("timesup"));
-            });                
-        }
-    }
-    */
-    
-    if(command === "help") {
-        if(args.length === 0) {
-            let embed_message = new Discord.MessageEmbed()
-                .setTitle(i18next.t("help"))
-                .setDescription(i18next.t("help_precisions"))
-                .setColor("#FFFFFF")
-                .addField("Configuration ", "**" + prefix + i18next.t("help_configure") + "\n**" + prefix + i18next.t("help_language") + "\n**" + prefix + i18next.t("help_prefix") , false)
-                .addField("Objects ", "**" + prefix + i18next.t("help_search") + "\n**", false)
-                .addField("Help ", "**" + prefix + i18next.t("help_help"), false)
-                .addField("Almanax ", "**" + prefix + i18next.t("help_almanax"), false)
-            message.channel.send({embeds: [embed_message]});
-        } else {
-            message.channel.send(i18next.t("toomucharguments"))
-        }
-    }
-
-    if(command === "almanax") {
-        if(args.length === 0) {
-            get_frame_total().then((json) => {
-                let wakfu_bonus = get_wakfu_bonus();
-                json['description_fr'] = json['description_fr'].slice(json['description_fr'].indexOf(" "));
-                json['description_en'] = json['description_en'].slice(json['description_en'].indexOf(" "));
-                let embed  = null;
+                item2.stats_fr.forEach(stat1 => {
+                    let id_found = false
+                    if (debuff_ids.includes(stat1[0])) {
+                        stat1[1] = stat1[1] * -1
+                    }
+                    item1.stats_fr.forEach(stat2 => {
+                        if (stat1[0] === stat2[0]) {
+                            id_found = true
+                            if (stat1[2] === stat2[2]) {
+                                tabStats2.push([stat1[0], stat1[1] - stat2[1], 0])
+                            } else {
+                                tabStats2.push([stat1[0], stat1[1] - stat2[1], stat1[2] - stat2[2]])
+                            }
+                        }
+                    })
+                    if (!id_found) {
+                        tabStats2.push([stat1[0], stat1[1], stat1[2]])
+                    }
+                })
+                console.log(tabStats1, tabStats2)
+                let k = 0
+                let l = 0
+                let tmpMessage1 = ""
+                let tmpMessage2 = ""
                 if(lang === "fr") {
-                    embed = new Discord.MessageEmbed().setTitle(json['day'] + " " + json['month'] + " 977")
-                        .setDescription(json['description_fr'])
-                        .addField('\u200b', '\u200b')
-                        .addField('BONUS WAKFU', wakfu_bonus[0])
-                        .addField('\u200b', '\u200b')
-                        .addField('BONUS DOFUS', json['dofus_bonus_fr']['bonus'])
-                        .setImage(json['img'])
+                    item1.stats_fr.forEach(stat => {
+                        let indicator = ""
+                        if (tabStats1[k][1] >= 0) {
+                            indicator = "+"
+                        }
+                        let stat_message = stat[4].toString();
+                        stat_message += " (" + indicator.toString() + tabStats1[k][1].toString() + ")"
+                        tmpMessage1 += stat_message + "\n"
+                        k++
+                    })
+                    item2.stats_fr.forEach(stat => {
+                        let indicator = ""
+                        if (tabStats2[l][1] >= 0) {
+                            indicator = "+"
+                        }
+                        let stat_message = stat[4].toString()
+                        stat_message += " (" + indicator.toString() + tabStats2[l][1].toString() + ")"
+                        tmpMessage2 += stat_message + "\n"
+                        l++
+                    });
                 } else {
-                    embed = new Discord.MessageEmbed().setTitle(json['day'] + " " + json['month'] + " 977")
-                        .setDescription(json['description_en'])
-                        .addField('\u200b', '\u200b')
-                        .addField('WAKFU\'S BONUS', wakfu_bonus[1])
-                        .addField('\u200b', '\u200b')
-                        .addField('BONUS DOFUS', json['dofus_bonus_en']['bonus'])
-                        .setImage(json['img'])
+                    item1.stats_en.forEach(stat => {
+                        let indicator = ""
+                        if (tabStats1[k][1] >= 0) {
+                            indicator = "+"
+                        }
+                        let stat_message = stat[4].toString();
+                        stat_message += " (" + indicator.toString() + tabStats1[k][1].toString() + ")"
+                        tmpMessage1 += stat_message + "\n"
+                        k++
+                    })
+                    item2.stats_en.forEach(stat => {
+                        let indicator = ""
+                        if (tabStats2[l][1] >= 0) {
+                            indicator = "+"
+                        }
+                        let stat_message = stat[4].toString()
+                        stat_message += " (" + indicator.toString() + tabStats2[l][1].toString() + ")"
+                        tmpMessage2 += stat_message + "\n"
+                        l++
+                    });
                 }
-                message.channel.send({embeds: [embed]});
-            });
-        } else {
-            message.channel.send(i18next.t("toomucharguments"))
-        }
-    }
-
-    if (command === 'bdd') {
-        if (args.length > 0) {
-            return message.channel.send(i18next.t('noargument'));
-        } if(message.author.id === "109752351643955200") {
-            client.guilds.cache.forEach(guild => {
-                let id_guild = guild.id;
-                let guild_name = guild.name;
-                try {
-                    collection.updateOne({id_server: {$eq: id_guild}}, {$set: {guild_name: guild_name}})
-                } catch (e) {
-                    console.log("erreur en modifiant " + guild_name)
+                console.log(tmpMessage1, tmpMessage2)
+                let item_one_name;
+                let item_two_name;
+                if (lang === "fr") {
+                    item_one_name = item1.name_fr
+                    item_two_name = item2.name_fr
+                } else {
+                    item_one_name = item1.name_en
+                    item_two_name = item2.name_en
                 }
-            });
-        } else {
-            console.log(message.author.username + " from " + message.guild.name + " tries to use bdd command.")
-            message.channel.send(i18next.t('noauthorized'))
+                let embed_message = new EmbedBuilder()
+                    .setTitle(i18next.t("itemVS") + item_one_name + " " + i18next.t(item1.rarity) + " VS " + item_two_name + " " + i18next.t(item2.rarity))
+                    .setColor("#000000")
+                    .addFields(
+                        {
+                            name: item_one_name.toString(),
+                            value: tmpMessage1.toString(),
+                            inline: true
+                        },
+                        {
+                            name: item_two_name.toString(),
+                            value: tmpMessage2.toString(),
+                            inline: true
+                        },
+                    );
+                interaction.editReply({embeds: [embed_message.toJSON()]});
+            }
         }
     }
 });

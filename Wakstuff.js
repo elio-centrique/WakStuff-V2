@@ -1,21 +1,18 @@
 
 //#region Imports & requires
+const dotenv = require("dotenv")
+dotenv.config();
 const i18next = require('i18next');
-const { Client, Intents } = require('discord.js');
+const {Discord, EmbedBuilder , Client, GatewayIntentBits , Interaction, MessageSelectMenu, MessageActionRow} = require('discord.js');
 const MongoClient = require('mongodb').MongoClient;
 const fs = require("fs");
-const fetch = require("node-fetch");
-let cheerio = require ('cheerio');
-let jsonframe = require ('jsonframe-cheerio');
-const axios = require('axios').default;
-const dotenv = require("dotenv")
-const Option = require("./assets/Classes/Option");
-dotenv.config();
+const moment = require("moment-timezone");
+const fetch = require('node-fetch-npm');
+const {Option} = require("./assets/Classes/Option");
 //#endregion
 
 //#region const declarations
-const client = new Client({ intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES] });
-const default_prefix = "w!";
+const client = new Client({intents: [GatewayIntentBits.Guilds] });
 const uri = "mongodb+srv://" + process.env['db_user'] + ":" +  process.env['db_pass'] + "@" +  process.env['db_name'] + "-l6ey6.gcp.mongodb.net/test?retryWrites=true&w=majority";
 const mongo_client = new MongoClient(uri, { useNewUrlParser: true });
 let mongo_collection;
@@ -41,11 +38,10 @@ load_itemslist();
  //#endregion
 
  //#region booting
-
  client.once('ready', () => {
      console.log("ready to serve");
  })
 
  eval(fs.readFileSync('./functions/commands/commands.js') + '');
- client.login(process.env["token"]);
+ client.login(process.env.token);
  //#endregion

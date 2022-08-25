@@ -1,4 +1,5 @@
 const Item = require("./assets/Classes/Item");
+const {EmbedBuilder} = require("discord.js");
 
 async function get_frame_fr(){
     let tmp_frame;
@@ -88,7 +89,7 @@ function get_wakfu_bonus(){
 
 async function get_language(message, collection, language = undefined) {
     if (language !== undefined) {
-        i18next.changeLanguage(language);
+        await i18next.changeLanguage(language);
         return language;
     } else {
         try {
@@ -96,15 +97,15 @@ async function get_language(message, collection, language = undefined) {
             let result = await collection.findOne({id_server: {$eq: message.guild.id}})
             if (result && result.id_server === message.guild.id) {
                 if (result.language) {
-                    i18next.changeLanguage(result.language)
+                    await i18next.changeLanguage(result.language)
                     return result.language
 
                 } else {
-                    i18next.changeLanguage('en');
+                    await i18next.changeLanguage('en');
                     return "en"
                 }
             } else {
-                i18next.changeLanguage('en');
+                await i18next.changeLanguage('en');
                 return "en";
             }
         } catch (e) {
@@ -119,13 +120,13 @@ async function set_language(message, collection, language) {
         if(result && result.id_server === message.guild.id) {
             await collection.updateOne({id_server: {$eq: message.guild.id}}, {$set: {language: language}})
             console.log(message.guild.name + i18next.t('guildupdated'))
-            i18next.changeLanguage(language);
-            message.channel.send(i18next.t('updatedlanguageguild') + language)
+            await i18next.changeLanguage(language);
+            message.editReply(i18next.t('updatedlanguageguild') + language)
         } else {
             await collection.insertOne({id_server: message.guild.id, language: language})
-            i18next.changeLanguage(language);
+            await i18next.changeLanguage(language);
             console.log(message.guild.name + i18next.t('guildconfigurated'));
-            message.channel.send(i18next.t('configuratedguild'))
+            message.editReply(i18next.t('configuratedguild'))
         }
         return language;
     } catch(e) {
@@ -133,39 +134,204 @@ async function set_language(message, collection, language) {
     }
 }
 
-async function get_prefix(message, collection) {
-    try {
-        let result = await collection.findOne({id_server: {$eq: message.guild.id}})
-        if(result && result.id_server === message.guild.id) {
-            if(result.prefix) {
-                return result.prefix;
-            } else {
-                return "w!"
+async function get_frame_fr(){
+    const today = moment().tz('Europe/Paris');
+    let json_frame;
+    const response = await fetch('https://haapi.ankama.com/json/Ankama/v2/Almanax/GetEvent?lang=fr&date=' + today.format('YYYY-MM-DD'));
+    await response.json().then(body => {
+        json_frame = {
+            day: today.date(),
+            month: body.month.name,
+            name: body.event['boss_name'],
+            description_fr: body.event['boss_text'],
+            ephemeris_fr: body.event.ephemeris,
+            rubrikabrax_fr: body.event.rubrikabrax,
+            zodiac: {
+                name: body.zodiac.name,
+                description_fr: body.zodiac.description,
+                img: body.zodiac['image_url']
+            },
+            img: body.event['boss_image_url'],
+            protector: {
+                name: body.month['protector_name'],
+                description_fr: body.month['protector_description'],
+                img: body.month['protector_image_url']
             }
-        } else {
-            return "w!"
         }
-    } catch(e) {
-        console.log(i18next.t("failgetprefix") + e);
-    }
+    })
+    return json_frame;
 }
 
-async function set_prefix(message, a_prefix, collection) {
-    try {
-        let result = await collection.findOne({id_server: {$eq: message.guild.id}})
-        if(result && result.id_server === message.guild.id) {
-            await collection.updateOne({id_server: {$eq: message.guild.id}}, {$set: {prefix: a_prefix}})
-            console.log(message.guild.name + i18next.t('guildupdated'))
-            message.channel.send(i18next.t('updatedprefixguild') + a_prefix)
-        } else {
-            await collection.insertOne({id_server: message.guild.id, language: "en", prefix: a_prefix})
-            console.log(message.guild.name + i18next.t('guildconfigurated'));
-            message.channel.send(i18next.t('configuratedguild'))
+async function get_frame_en() {
+    const today = moment().tz('Europe/Paris');
+    let json_frame;
+    const response = await fetch('https://haapi.ankama.com/json/Ankama/v2/Almanax/GetEvent?lang=en&date=' + today.format('YYYY-MM-DD'));
+    await response.json().then(body => {
+        json_frame = {
+            day: today.date(),
+            month: body.month.name,
+            name: body.event['boss_name'],
+            description_en: body.event['boss_text'],
+            ephemeris_en: body.event.ephemeris,
+            rubrikabrax_en: body.event.rubrikabrax,
+            zodiac: {
+                name: body.zodiac.name,
+                description_en: body.zodiac.description,
+                img: body.zodiac['image_url']
+            },
+            img: body.event['boss_image_url'],
+            protector: {
+                name: body.month['protector_name'],
+                description_en: body.month['protector_description'],
+                img: body.month['protector_image_url']
+            }
         }
-        return a_prefix;
-    } catch(e) {
-        console.log(i18next.t("failsetlanguage") + e);
+    })
+    return json_frame;
+}
+
+async function get_frame_total() {
+    let json_total = await get_frame_fr();
+    let tmp_json = await get_frame_en();
+    json_total.description_en = tmp_json.description_en;
+    json_total.zodiac.description_en = tmp_json.zodiac.description_en;
+    json_total.protector.description_en = tmp_json.protector.description_en;
+    json_total.ephemeris_en = tmp_json.ephemeris_en;
+    json_total.rubrikabrax_en = tmp_json.rubrikabrax_en;
+    return json_total;
+}
+
+function get_wakfu_bonus(){
+    let bonus = [];
+    const today = moment().tz('Europe/Paris');
+    const compare = moment("20191121").tz('Europe/Paris');
+    let difference = today.diff(compare, 'days');
+    switch(difference % 5) {
+        case 0:
+            bonus[0] = "+40 Prospection";
+            bonus[1] = "+40 Prospecting";
+            break;
+        case 1:
+            bonus[0] = "+20% XP & Vitesse de Fabrication";
+            bonus[1] = "+20% XP & Speed Craft";
+            break;
+        case 2:
+            bonus[0] = "+30% XP Récolte et Plantation";
+            bonus[1] = "+30% XP Harvest & Planting";
+            break;
+        case 3:
+            bonus[0] = "+20% Quantité de Récolte et Chance de Plantation";
+            bonus[1] = "+20% Quantity of Harvest & +20% Chance of Planting";
+            break;
+        case 4:
+            bonus[0] = "+40 Sagesse";
+            bonus[1] = "+40 Wisdom";
+            break;
     }
+    return bonus;
+}
+
+async function send_message(lang, interaction = undefined) {
+    get_frame_total().then((json) => {
+        let wakfu_bonus = get_wakfu_bonus();
+        let embed;
+        if (lang.toLowerCase() === 'fr') {
+            embed = new EmbedBuilder().setTitle(json.day + " " + json.month + " 977")
+                .setDescription('**BONUS WAKFU** \n *' + wakfu_bonus[0] + '*')
+            embed.addFields(
+            {
+                    name:'\u200b',
+                    value:'\u200b'
+                },
+                {
+                    name: i18next.t('monthprotector'),
+                    value: json.protector.description_fr
+                })
+            embed.addFields(
+        {
+                name:'\u200b',
+                value:'\u200b'
+            },
+            {
+                name: i18next.t('meridia'),
+                value: json.description_fr
+            },
+            {
+                name: '\u200b',
+                value:'\u200b'
+            },
+            {
+                name: i18next.t('zodiac'),
+                value: json.zodiac.description_fr
+            },
+            {
+                name: '\u200b',
+                value:'\u200b'
+            },
+            {
+                name: i18next.t('ephemeris'),
+                value: json.ephemeris_fr
+            },
+            {
+                name: '\u200b',
+                value:'\u200b'
+            },
+            {
+                name: i18next.t('rubricabrax'),
+                value: json.rubrikabrax_fr
+            });
+            embed.setImage(json.img)
+        } else {
+            embed = new MessageEmbed().setTitle(json['day'] + " " + json['month'] + " 977")
+                .setDescription('**WAKFU BONUS** \n *' + wakfu_bonus[1] + '*');
+            embed.addFields(
+                {
+                    name:'\u200b',
+                    value:'\u200b'
+                },
+                {
+                    name: i18next.t('monthprotector'),
+                    value: json.protector.description_en
+                })
+            embed.addFields(
+                {
+                    name:'\u200b',
+                    value:'\u200b'
+                },
+                {
+                    name: i18next.t('meridia'),
+                    value: json.description_en
+                },
+                {
+                    name: '\u200b',
+                    value:'\u200b'
+                },
+                {
+                    name: i18next.t('zodiac'),
+                    value: json.zodiac.description_en
+                },
+                {
+                    name: '\u200b',
+                    value:'\u200b'
+                },
+                {
+                    name: i18next.t('ephemeris'),
+                    value: json.ephemeris_en
+                },
+                {
+                    name: '\u200b',
+                    value:'\u200b'
+                },
+                {
+                    name: i18next.t('rubricabrax'),
+                    value: json.rubrikabrax_en
+                });
+            embed.setImage(json.img)
+        }
+        if(interaction) {
+            interaction.editReply({embeds: [embed]});
+        }
+    })
 }
 
 function load_itemslist() {
@@ -181,6 +347,7 @@ function load_itemslist() {
 
             //#region items creation. 
             parsed_items.forEach(item => {
+                let id = item["definition"]["item"]["id"]
                 let rarity_number = item['definition']['item']['baseParameters']['rarity'];
                 let rarity
                 let color;
@@ -373,6 +540,7 @@ function load_itemslist() {
 
                 //console.log(sorted_stats_en)
                 list_items.push(new Item.Item(
+                    id,
                     name_fr, 
                     name_en, 
                     rarity, 
