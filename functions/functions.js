@@ -1,6 +1,92 @@
 const Item = require("./assets/Classes/Item");
 const {EmbedBuilder} = require("discord.js");
 
+async function get_frame_fr(){
+    let tmp_frame;
+    await axios.get('http://www.krosmoz.com/fr/almanax').then((res) => {
+        let $ = cheerio.load(res.data);
+        jsonframe($);
+
+        let frame = {
+            day: "span[class=day-number]",
+            month: "span[class=day-text]",
+            name: "div#almanax_boss span.title",
+            description_fr: "div#almanax_boss_desc",
+            img: "div#almanax_boss_image img",
+            dofus_bonus_fr: {
+                bonus: "div.more"
+            }
+        }
+        return $('body').scrape(frame, {string: true});
+    }).then((frame) => {
+        tmp_frame = JSON.parse(frame);
+    })
+    return tmp_frame;
+}
+
+async function get_frame_en() {
+    let tmp_frame;
+    await axios.get('http://www.krosmoz.com/en/almanax').then((res) => {
+        let $ = cheerio.load(res.data);
+        jsonframe($);
+
+        let frame = {
+            description_en: "div#almanax_boss_desc",
+            dofus_bonus_en: {
+                bonus: "div.more"
+            }
+        }
+        return $('body').scrape(frame, {string: true});
+    }).then((frame) => {
+        tmp_frame = JSON.parse(frame);
+    })
+    return tmp_frame;
+}
+
+async function get_frame_total() {
+    let json_total;
+    let tmp_json;
+    await get_frame_fr().then(async(json_fr) => {
+        json_total = json_fr;
+    })
+    await get_frame_en().then(async(json_en) => {
+        tmp_json = json_en;
+    })
+    json_total['description_en'] = tmp_json['description_en'];
+    json_total['dofus_bonus_en'] = tmp_json['dofus_bonus_en'];
+    return json_total;
+}
+
+function get_wakfu_bonus(){
+    let bonus = [];
+    const today = Date.now();
+    const compare = Date.parse("2019-11-21");
+    let difference = Math.floor((((today - compare)/1000)/3600)/24);
+    switch(difference % 5) {
+        case 0:
+            bonus[0] = "+40 Prospection";
+            bonus[1] = "+40 Prospecting";
+            break;
+        case 1:
+            bonus[0] = "+20% XP & Vitesse de Fabrication";
+            bonus[1] = "+20% XP & Speed Craft";
+            break;
+        case 2:
+            bonus[0] = "+30% XP Récolte et Plantation";
+            bonus[1] = "+30% XP Harvest & Planting";
+            break;
+        case 3:
+            bonus[0] = "+20% Quantité de Récolte et Chance de Plantation";
+            bonus[1] = "+20% Quantity of Harvest & +20% Chance of Planting";
+            break;
+        case 4:
+            bonus[0] = "+40 Sagesse";
+            bonus[1] = "+40 Wisdom";
+            break;
+    }
+    return bonus;
+}
+
 async function get_language(message, collection, language = undefined) {
     if (language !== undefined) {
         await i18next.changeLanguage(language);
