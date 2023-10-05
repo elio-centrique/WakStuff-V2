@@ -282,7 +282,7 @@ async function send_message(lang, interaction = undefined) {
             });
             embed.setImage(json.img)
         } else {
-            embed = new MessageEmbed().setTitle(json['day'] + " " + json['month'] + " 977")
+            embed = new EmbedBuilder().setTitle(json['day'] + " " + json['month'] + " 977")
                 .setDescription('**WAKFU BONUS** \n *' + wakfu_bonus[1] + '*');
             embed.addFields(
                 {

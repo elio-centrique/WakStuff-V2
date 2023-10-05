@@ -103,6 +103,9 @@ client.on('interactionCreate', async interaction => {
                 } else {
                     if (list_found.length === 1) {
                         if (lang === 'fr') {
+                            if(list_found[0].description_fr.length > 4096) {
+                                list_found[0].description_fr = list_found[0].description_fr.substring(0, 4093) + "...";
+                            }
                             let embed = new EmbedBuilder().setTitle(list_found[0].name_fr)
                                 .setDescription(list_found[0].get_message_stats(lang))
                                 .setColor(list_found[0].color)
@@ -113,6 +116,9 @@ client.on('interactionCreate', async interaction => {
                                 .setImage(list_found[0].image)
                             interaction.editReply({embeds:[embed]});
                         } else {
+                            if(list_found[0].description_en.length > 4096) {
+                                list_found[0].description_en = list_found[0].description_en.substring(0, 4093) + "...";
+                            }
                             let embed = new EmbedBuilder().setTitle(list_found[0].name_en)
                                 .setDescription(list_found[0].get_message_stats(lang))
                                 .setColor(list_found[0].color)
@@ -257,7 +263,6 @@ client.on('interactionCreate', async interaction => {
             let find_object = false
             let item_selected = null;
             try {
-                console.log(interaction.values);
                 list_items.forEach(item => {
                     if(item.id === parseInt(interaction.values)){
                         item_selected = item;
@@ -265,6 +270,9 @@ client.on('interactionCreate', async interaction => {
                     }
                 })
                 if (lang === "fr") {
+                    if(item_selected.description_fr.length > 4096) {
+                        item_selected.description_fr = item_selected.description_fr.substring(0, 4093) + "...";
+                    }
                     let embed_item = new EmbedBuilder()
                         .setTitle(item_selected.name_fr + " "  + i18next.t("level") + " " + item_selected.level)
                         .setDescription(item_selected.get_message_stats(lang))
@@ -274,10 +282,15 @@ client.on('interactionCreate', async interaction => {
                             value: item_selected.description_fr
                         })
                         .setImage(item_selected.image)
-                    interaction.editReply({
+                    await interaction.deleteReply();
+                    interaction.followUp({
+                        content: " ", 
                         embeds: [embed_item.toJSON()]
                     });
                 } else {
+                    if(item_selected.description_en.length > 4096) {
+                        item_selected.description_en = item_selected.description_en.substring(0, 4093) + "...";
+                    }
                     let embed_item = new EmbedBuilder()
                         .setTitle(item_selected.name_en + " " + i18next.t("level") + " " + item_selected.level)
                         .setDescription(item_selected.get_message_stats(lang))
@@ -373,7 +386,6 @@ client.on('interactionCreate', async interaction => {
                         tabStats2.push([stat1[0], stat1[1], stat1[2]])
                     }
                 })
-                console.log(tabStats1, tabStats2)
                 let k = 0
                 let l = 0
                 let tmpMessage1 = ""
