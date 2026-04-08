@@ -5,11 +5,11 @@
   "main": "Wakstuff.js",
   "dependencies": {
     "@discordjs/builders": "^1.5.0",
-    "@discordjs/rest": "^1.6.0",
+    "@discordjs/rest": "^2.6.1",
     "axios": "^1.13.5",
     "bufferutil": "^4.0.6",
     "cheerio": "^1.0.0-rc.5",
-    "discord.js": "^14.8.0",
+    "discord.js": "^14.26.2",
     "dotenv": "^16.0.1",
     "erlpack": "github:discord/erlpack",
     "fs": "*",
